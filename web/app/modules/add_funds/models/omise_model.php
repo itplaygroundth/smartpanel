@@ -113,9 +113,7 @@ class omise_model extends MY_Model {
 		$query = $this->db->get();
 		$result = $query->result();
 		return $result;
-		//print_r($result);
-		// $data.push($result);
-		// return $data;
+	
 	}
 
     // public function destroy($user_id)
