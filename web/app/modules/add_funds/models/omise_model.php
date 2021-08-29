@@ -14,7 +14,7 @@ class omise_model extends MY_Model {
 	const STATUS_PENDING    = 'pending';
 	const STATUS_EXPIRED    = 'expired';
 	const STATUS_REVERSED   = 'reversed';
-	
+
 	public function __construct(){
 		//$this->tb_creditcards = CREDITCARDS;
 		parent::__construct();
@@ -100,7 +100,6 @@ class omise_model extends MY_Model {
             return false;
         }
     }
-
 
 	public function get_users_info(){
 
