@@ -1,0 +1,64 @@
+version: '3.7'
+
+volumes:
+  config:
+
+services:
+      
+  smm_https:
+    image: caddy:latest
+    container_name: smm_https
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+  
+  smm_app:
+    container_name: smm_app
+    build:
+      context: ./web
+      dockerfile: ./Dockerfile
+    env_file: .env
+    volumes:
+      - ./web:/app
+    ports:
+      - "8000:80"
+    working_dir: /app
+    depends_on:
+       - smm_mysql
+  
+  cronjob:
+    container_name: cronjob
+    build: 
+      context: cron
+      dockerfile: ./Dockerfile
+
+
+  smm_mysql:
+    container_name: smm_mysql
+    image: mysql:5.7.32
+    restart: always
+    volumes:
+      #- ./mysql/initdb:/docker-entrypoint-initdb.d
+      - ./mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    env_file: .env
+  
+  smm_phpmyadmin:
+    container_name: smm_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8181:80"
+    env_file: .env
+    depends_on:
+      - smm_mysql
+    environment:
+      - PMA_HOST=smm_mysql
+      # - PMA_ABSOLUTE_URI=http://phpmyadmin.domain.com/
+ 
+  
