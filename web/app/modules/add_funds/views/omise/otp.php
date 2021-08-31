@@ -1,5 +1,6 @@
 <div class="row justify-content-md-center">
-    <form id="frm-truewallet" method="post" action="<?=cn($module."/omise/process")?>">
+    <form id="frm-truewallet" method="post" class="form omisepayForm" action="<?=cn($module."/omise/checkotp")?>"
+        data-redirect="<?=cn($module)."/omise/successfuly"?>" >
         <div class="container  justify-content-center">
                     <div class="card p-5">
                         <div class="card-header d-flex align-items-center">
@@ -14,6 +15,7 @@
                             <div class="form-group">
                                 <label for="omise_otp" class="form-label">OTP:</label>
                                 <input type="text" id="omise_otp" class="form-control" name="omise_otp">
+                                <input type="hidden" name="payment_method" value="<?=$payment_method?>" />
                                 <button id="submit" class="btn"><b><?=lang("process")?></b></button>
                            
                             </div>

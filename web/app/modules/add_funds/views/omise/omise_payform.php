@@ -1,7 +1,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/imask/2.1.1/imask.js"></script>
-
+<div class="add-funds-form-content">
 <div class="row justify-content-md-center">
-    <form id="paymentFrm" method="post" id="checkout" action="<?=cn($module."/omise/process")?>"
+    <form id="paymentFrm" class="form omisepayForm" method="post" id="checkout" action="<?=cn($module."/omise/process")?>"
         data-redirect="<?=cn($module."/omise")?>" novalidate>
 
         <div class="container  justify-content-center">
@@ -12,13 +12,9 @@
                 <div class="pricing p-3 rounded mt-4 d-flex justify-content-between">
 
                     <div class="d-flex flex-row align-items-center">
-                        <!--pricing table-->
-
-                        <label
-                            class="form-label"><?=sprintf(lang("total_amount_XX_includes_fee"), get_option('currency_code'))?></label>
+                        <label class="form-label"><?=sprintf(lang("total_amount_XX_includes_fee"), get_option('currency_code'))?></label>
                         <input title="TXN_AMOUNT" tabindex="10" type="hidden" name="TXN_AMOUNT" value="<?=$amount?>">
                         <input type="text" class="form-control taxamount" value="<?=$amount?>" disabled>
-
                     </div>
                     <input type="hidden" id="ORDER_ID" tabindex="1" maxlength="20" size="20" name="ORDER_ID"
                         autocomplete="off" value="<?php echo  "ORDS" . rand(10000,99999999)?>">
@@ -56,7 +52,7 @@
                         <?php if(count($creditcards)==0):?>
                         <span id="caret" class="caret">
                             <h1 class="page-title">
-                                <a id="toggle_add"><i class="fa fa-plus-square text-primary" aria-hidden="true"></i></a>
+                                <!-- <a id="toggle_add"><i class="fa fa-plus-square text-primary" aria-hidden="true"></i></a> -->
                                 <!-- <a id="toggle_add" class="ajaxModal"><span class="add-new" data-toggle="tooltip"
                                         data-placement="bottom" title="<?=lang("add_new")?>"
                                         data-original-title="Add new"><i class="fa fa-plus-square text-primary"
@@ -65,24 +61,7 @@
                         </span>
                         <?php endif?>
                     </div>
-
-                    <div class="credit rounded   d-flex justify-content-between align-items-center ">
-                        <div id="creditcard_list" class="mt-4 hidden rightButton">
-                            <?php foreach ($creditcards as $key => $row): ?>
-                            <div class="pl-7 d-flex flex-row align-items-center"> <img
-                                    src="https://i.imgur.com/qHX7vY1.png" class="rounded" width="70">
-                                <div class="d-flex flex-column ml-3">
-                                    <span class="business">Credit Card</span>
-                                    <span class="plan"><?=$row->creditcardno?>
-                                    </span>
-                                </div>
-                                <input type="text" class="form-control cvv" name="selected_cvc" placeholder="CVC">
-                            </div>
-
-                            <?php endforeach ?>
-                        </div>
-                    </div>
-
+                    <?php if(count($creditcards)==0):?>
                     <div class="pl-5">
                         <div id="add_credit" class="hidden">
                             <!-- <div class="payment-title">
@@ -116,6 +95,26 @@
                             </div>
                         </div>
                     </div>
+                    <?php endif?>
+                    <?php if(count($creditcards)>0):?>
+                    <div class="credit rounded   d-flex justify-content-between align-items-center ">
+                        <div id="creditcard_list" class="mt-4 hidden rightButton">
+                            <?php foreach ($creditcards as $key => $row): ?>
+                            <div class="pl-7 d-flex flex-row align-items-center"> <img
+                                    src="https://i.imgur.com/qHX7vY1.png" class="rounded" width="70">
+                                <div class="d-flex flex-column ml-3">
+                                    <span class="business">Credit Card</span>
+                                    <span class="plan"><?=$row->creditcardno?>
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control cvv" name="selected_cvc" placeholder="CVC">
+                            </div>
+
+                            <?php endforeach ?>
+                        </div>
+                    </div>
+                    <?php endif ?>
+                    
 
                     <div>
                         <div class="card-header d-flex align-items-center">
@@ -127,7 +126,7 @@
                     </div>
                     <div>
                         <div class="card-header d-flex align-items-center">
-                            <input type="radio" class="mr-5" value="offlinepay" id="payment_method3" name="payment_method">
+                            <input type="radio" class="mr-5" value="offline" id="payment_method3" name="payment_method">
                             <h1 class="page-title"><i class="pr-2 fa fa-bank fa-2x text-primary" aria-hidden="true"></i>
                                 <?=lang("Offline pay")?></h1>
                         </div>
@@ -140,12 +139,100 @@
             </div>
         </div>
     </form>
-
+                            </div>               
 </div>
 <script>
 $(document).ready(function() {
 
+      
+      $(document).on("submit", ".omisepayForm", function(){
+        
+        pageOverlay.show();
+        event.preventDefault();
+        _that         = $(this);
+        
+        _action       = PATH + 'add_funds/omise/process';
+        _action       = _that[0].action;
+        _redirect     = _that.data("redirect");
+        _data         = _that.serialize();
+       
+       if(_that[0].id=='frm-off'){
+       
+        var postData = new FormData($('form')[0]);
 
+       
+        postData.append("File", $("input[name=imagefile]")[0].files[0]); // file
+        $.ajax({type:'POST',url:_action,data:postData,
+                cache:false,
+                contentType: false,
+                processData: false,
+                success:function (_result) {
+                   
+                    setTimeout(function(){
+                        pageOverlay.hide();
+                    },1500)
+                    if (is_json(_result)) {
+                        _result = JSON.parse(_result);
+        
+                        if (_result.status == 'success' && typeof _result.redirect_url != "undefined") {
+                            window.location.href = _result.redirect_url;
+                        }
+        
+                        setTimeout(function(){
+                            notify(_result.message, _result.status);
+                        },1500)
+        
+                        setTimeout(function(){
+                            if(_result.status == 'success' && typeof _redirect != "undefined"){
+                                reloadPage(_redirect);
+                            }
+                        }, 2000)
+                    }else{
+                        setTimeout(function(){
+                            $(".add-funds-form-content").html(_result);
+                            // console.log(_result);
+                        }, 100)
+                    }
+                }
+                
+        });
+        
+        
+       }else {
+        _data         = _data + '&' + $.param({token:token});
+        $.post(_action, _data, function(_result){
+              
+              setTimeout(function(){
+                pageOverlay.hide();
+              },1500)
+              if (is_json(_result)) {
+                  _result = JSON.parse(_result);
+  
+                  if (_result.status == 'success' && typeof _result.redirect_url != "undefined") {
+                      window.location.href = _result.redirect_url;
+                  }
+  
+                  setTimeout(function(){
+                      notify(_result.message, _result.status);
+                  },1500)
+  
+                  setTimeout(function(){
+                      if(_result.status == 'success' && typeof _redirect != "undefined"){
+                          reloadPage(_redirect);
+                      }
+                  }, 2000)
+              }else{
+                  setTimeout(function(){
+                      $(".add-funds-form-content").html(_result);
+                     // console.log(_result);
+                  }, 100)
+              }
+          })
+       }
+       
+        return false;
+      })
+    
     $("#toggle_add").click(function() {
         //console.log($("#payment_method2").prop('checked'))
         if ($("#add_credit").attr("class") == "unhidden")
@@ -158,10 +245,12 @@ $(document).ready(function() {
 
         var optionValue = $(this).val();
         $("#paymentFrm").attr("data-redirect", '<?=cn($module."/omise")?>' + '/' + optionValue);
-        console.log($("#paymentFrm").attr("action"))
+        //console.log($("#paymentFrm").attr("action"))
         //console.log(optionValue)
         if (optionValue == "creditcard") {
             $("#creditcard_list").attr("class", "hidden unhidden");
+            if ($("#add_credit").attr("class") == "hidden")
+                $("#add_credit").attr("class", "unhidden");
         } else {
 
             $("#creditcard_list").attr("class", "hidden rightButton");

@@ -26,6 +26,7 @@ function General(){
 
     this.add_funds = function(){
       $(document).on("submit", ".actionAddFundsForm", function(){
+        //  console.log(PATH)
         pageOverlay.show();
         event.preventDefault();
         _that         = $(this);

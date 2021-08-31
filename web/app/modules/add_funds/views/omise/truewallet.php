@@ -1,6 +1,6 @@
 
 <div class="row justify-content-md-center">
-<form id="paymentFrm" method="post" id="checkout" action="<?=cn($module."/omise/otp")?>" data-redirect="<?=cn($module)."/omise/otp"?>">
+<form id="paymentFrm" method="post" class="form omisepayForm" id="checkout" action="<?=cn($module."/omise/otp")?>" data-redirect="<?=cn($module)."/omise/otp"?>">
         <div class="container  justify-content-center">
 
                     <div class="card p-5">
@@ -16,6 +16,7 @@
                             <div class="form-group">
                                 <label for="omise_phonenumber" class="form-label">Phone Number:</label>
                                 <input type="text" id="omise_phonenumber" class="form-control" name="omise_phonenumber">
+                                <input type="hidden" name="payment_method" value="<?=$payment_method?>" />
                                 <button id="submit" class="btn btn-primary"><b><?=lang("send")?></b></button>
                                 <?=lang( 'One-Time Password (OTP) will be sent to the phone number above,omise' ); ?>
                             </div>

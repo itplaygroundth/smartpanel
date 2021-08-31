@@ -10,6 +10,7 @@ class api extends MX_Controller {
 	public $tb_orders;
 	public $api_key;
 	public $uid;
+	public $tb_transaction_logs;
 
 	public function __construct(){
 		parent::__construct();
@@ -19,6 +20,8 @@ class api extends MX_Controller {
 		$this->tb_categories = CATEGORIES;
 		$this->tb_services   = SERVICES;
 		$this->tb_orders     = ORDER;
+		$this->tb_transaction_logs   = TRANSACTION_LOGS;
+		
 	}
 
 	public function index(){
@@ -28,99 +31,30 @@ class api extends MX_Controller {
 	public function webhooks(){
 		$params = [];
 		
-		// $this->api_key = (isset($_REQUEST["key"])) ? strip_tags(urldecode($_REQUEST["key"])) : '';
-		// $action        = (isset($_REQUEST["action"])) ? strip_tags(urldecode($_REQUEST["action"])) : '';
-		// $order_id      = (isset($_REQUEST["order"])) ? strip_tags(urldecode($_REQUEST["order"])) : '';
-		// $order_ids     = (isset($_REQUEST["orders"])) ? strip_tags(urldecode($_REQUEST["orders"])) : '';
-		// $data          = (isset($_REQUEST["data"])) ? strip_tags(urldecode($_REQUEST["data"])) : '';
-		//Build parameters and call appropriate sub function
+		 
 		$params = $_POST;
 		
 		$json = file_get_contents('php://input');
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
-		$data = $json_ob->data;
-		
-		 if($key == 'charge.complete'){
-			 if($data->status == 'successful'){
-			echo_json_string(array(
-				'key'=>$key,
-				'data' =>  $data
-			));
-		 } else {
-			echo_json_string(array(
-				'key'=>$key,
-				'data' => "failed"
-			));
-		 }
+		$charge = $json_ob->data;
+		$transaction_id = $charge->source->id;
+		$dbtr=get_transaction_byid($transaction_id);
+		 if($key == 'charge.complete' ){
+					$data = array(
+						"status"            => $charge->status=='failed'?2:1,
+						"data"              => $charge->status=='failed'?$charge->failure_message:""
+					 );
+					$this->db->update($this->tb_transaction_logs, $data,['transaction_id'=>$transaction_id]);
+					set_session("transaction_id", $transaction_id);
+					if($charge->status!='failed'){
+						
+					// $user_balance = get_field($this->tb_users, ["id" => $dbtr['uid']], "balance");
+                    // $user_balance += ($charge->data->amount-(($charge->data->amount/100)*$transaction_fee))/100;//session("real_amount");
+                    // $this->db->update($this->tb_users, ["balance" => $user_balance], ["id" => $user_id]);
+					}
 		}
-		// 	if($json_ob->data->status == 'successful'){
-		// 		echo_json_string(array(
-		// 			'status'=> $json_ob->data->status
-		// 			'data' =>  $json_ob->data 
-		// 	));
-		// 	} else 
-		// 		if($json_ob->data->status == 'failed'){
-		// 			echo_json_string(array(
-		// 				'status'=> $json_ob->data->status
-		// 				'data' =>  $json_ob->data)); 
-		// 	}
-		// }
-		//var_dump($json);
-		 
-		// $uid_exists = get_field($this->tb_users, ["api_key" => $this->api_key, "status" => 1], "id");
-		// if ($this->api_key == "" || empty($uid_exists)) {
-		// 	echo_json_string(array(
-		// 		'error' => lang("api_is_disable_for_this_user_or_user_not_found_contact_the_support"),
-		// 	));
-		// }
-		// $this->uid = $uid_exists;
-
-		// $action_allowed = array('add', 'status', 'services', 'balance');
-		// if ($action == "" || !in_array($action, $action_allowed)) {
-		// 	echo_json_string(array(
-		// 		'error' => lang("this_action_is_invalid"),
-		// 	));
-		// }
-
-		// switch ($action) {
-		// 	case 'services':
-		// 		$services = $this->model->get_services_list($this->uid);
-		// 		if (!empty($services)) {
-		// 			echo_json_string($services);
-		// 		}else{
-		// 			echo_json_string(array(
-		// 				'status' => "success",
-		// 				'data'   => "Empty Data",
-		// 			));
-		// 		}
-		// 		break;
-
-		// 	case 'add':
-		// 		$this->add($_REQUEST);
-		// 		break;
-
-		// 	case 'status':
-					
-		// 			if (isset($order_id) && $order_id != "") {
-		// 				$this->single_status($order_id);
-		// 			}	
-							
-		// 			if (isset($order_ids) && $order_ids != "") {
-		// 				$this->multi_status($order_ids);
-		// 			}
-		// 			break;
-			
-		// 	case 'balance':
-		// 			$this->balance();
-		// 			break;	
-
-		// 	default:
-		// 		echo_json_string(array(
-		// 			'error' => lang("this_action_is_invalid"),
-		// 		));
-		// 		break;
-		// }
+		
 	}
 
 	public function docs(){

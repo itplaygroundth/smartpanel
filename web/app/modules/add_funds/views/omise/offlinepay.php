@@ -1,5 +1,5 @@
 <div class="row justify-content-md-center">
-    <form id="frm-or" method="post" action="<?=cn($module."/omise/offline")?>" data-redirect="<?=cn($module)."/omise/offline"?>" enctype="multipart/form-data">
+    <form id="frm-or" method="post" class="form omisepayForm" action="<?=cn($module."/omise/offline")?>" data-redirect="<?=cn($module)."/omise/successful"?>" enctype="multipart/form-data"> 
         <div class="container  justify-content-center">
             <div class="card p-5">
                 <div class="card-header d-flex align-items-center">
@@ -17,20 +17,22 @@
                             
                             <label
                                 class="form-label"><h1 class="page-title"><?=sprintf("Account Number: %s",$user_info->account_number)?></h1></label>
-                          
+
                             
                         </div>
                         <input type="hidden" id="ORDER_ID" tabindex="1" maxlength="20" size="20" name="ORDER_ID"
                             autocomplete="off" value="<?php echo  "ORDS" . rand(10000,99999999)?>">
+                            <input type="hidden" name="account_number" value="<?=$user_info->account_number?>" />
+                            <input type="hidden" name="payment_method" value="<?=$payment_method?>" />
                         <input type="hidden" name="user_id" value="<?=session("uid")?>" />
                         <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
                             value="<?php echo $this->security->get_csrf_hash();?>">
                         <!-- /pricing table-->
                     </div>
                     <div class="form-group">
-                        <!-- <label for="omise_qrcode" class="form-label">QRCode:</label> -->
+                        
                         <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="customFile" name="filename">
+                        <input type="file" class="custom-file-input" id="customFile" name="imagefile" accept="image/*">
                         <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
                                 <button id="submit" class="btn"><b><?=lang("process")?></b></button>
@@ -48,6 +50,7 @@
 // Add the following code if you want the name of the file appear on select
 $(".custom-file-input").on("change", function() {
   var fileName = $(this).val().split("\\").pop();
+    this.temp_file = $(this).val();
   $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
 });
 </script>

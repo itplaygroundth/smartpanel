@@ -131,6 +131,8 @@ define("SUBSCRIBERS", "general_subscribers");
 
 define("PAYMENTS_METHOD", "payments");
 define("PAYMENTS_BONUSES", "payments_bonus");
+define('CDN_UPLOAD',getenv('CDN_UPLOAD'));
+define('URL_UPLOADS',getenv('UPLOAD_PATH'));
 
 define("SCRIP_APP_ID", 23595718);
 if (!defined('CUSTOM_PAGE')) {

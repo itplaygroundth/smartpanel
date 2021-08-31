@@ -7,12 +7,14 @@ class api_model extends MY_Model {
 	public $tb_categories;
 	public $tb_services;
 	public $tb_orders;
+	public $tb_transaction_logs;
 
 	public function __construct(){
 		$this->tb_categories 	= CATEGORIES;
 		$this->tb_services   	= SERVICES;
 		$this->tb_orders     	= ORDER;
 		$this->tb_users_price   = USERS_PRICE;
+		$this->tb_transaction_logs   = TRANSACTION_LOGS;
 		parent::__construct();
 	}
 
@@ -102,6 +104,19 @@ class api_model extends MY_Model {
 			return $result;
 		}
 		return false;
+	}
+
+	function get_transaction_byid($id){
+		$this->db->select("*");
+		$this->db->from($this->tb_transaction_logs);
+		$this->db->where('uid', session('uid'));
+		$this->db->where('transaction_id',$id);
+		//$this->db->where('status',0);
+		$this->db->order_by("id", 'ASC');
+		
+		$query = $this->db->get();
+		$result = $query->result();
+		return $result;
 	}
 
 }

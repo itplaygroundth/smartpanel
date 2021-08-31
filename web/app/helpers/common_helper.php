@@ -1,4 +1,5 @@
 <?php
+require_once (APPPATH.'/libraries/unirest-php/src/Unirest.php');
 if(!function_exists('post_get')){
 	function post_get($name = ""){
 		$CI = &get_instance();
@@ -1645,4 +1646,41 @@ if (!function_exists('get_user_role')) {
 		$role = get_field(USERS, ['id' => $uid], "role");
 		return $role;
 	}
+}
+
+if (!function_exists('uploadimage')){
+	function uploadimage($image_file_temp,$upload_folder,$image_new_name,$suffix){
+
+       
+        $headers = array('Accept' => 'application/json');
+        $body = array("file"=>\Unirest\Request\Body::file($image_file_temp,mime_content_type($image_file_temp), $image_new_name),
+        "path"=>$upload_folder,
+        'needSrcImg' => 'true',
+        'PNGBGColor' => '255-0-0',
+        "options"=>'{"dimensions":[{"key":"'.session("uid").'", "height":400, "suffix":"'.$suffix.'", "name": "'.session("uid").'","conditionRatio":{"vertical":[2560,2048],"square":[3000,2000],"horizontal":[1600,960]}}]}',
+        'srcImgName' => '{"dimensions": [{ "name": "'.session("uid").'" , "suffix": "-original" }]}',
+        'provider' => 'aws',
+        'appId' => 'EAAcyxgV1VRrUw7gjT7He40G6LLNdH-redemgo-com',
+        'hot' => 'true');
+
+        
+
+        $response = \Unirest\Request::post(URL_UPLOADS,$headers,$body);
+
+        //print_r($response->body);
+        if($response->code==200){
+            return array(
+				 "status"=>true,
+				 "image_name"=>CDN_UPLOAD.$response->body->location[0]->relativePath
+			 );
+
+        }else {
+			return array(
+				"status"=>false,
+				"image_name"=>""
+			);
+		}
+		//return false;
+        
+    }
 }

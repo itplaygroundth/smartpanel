@@ -86,6 +86,7 @@
   }
 
  function notify(_ms, _type){
+   
   switch(_type) {
       
     case 'error':
