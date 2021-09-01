@@ -37,8 +37,8 @@
                     </select>
                   </div>
                   <div id="btn_views" class="left ">
-                    <input type="button" class="btn btn-info btn-min-width mr-1 mb-1" data-toggle="modal" data-target="#exampleModalLong"
-                      value="<?=lang("Views")?>" />
+                    <input type="button" id="modal_view" class="btn btn-info btn-min-width mr-1 mb-1" data-toggle="modal" data-target="#exampleModalLong"
+                      value="<?=lang("Views")?>" disabled />
                     
 
                   </div>

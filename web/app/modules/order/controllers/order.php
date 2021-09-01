@@ -1050,17 +1050,8 @@ class order extends MX_Controller {
         
 		return $result;
 
-	// 	CURLOPT_URL => "https://instagram40.p.rapidapi.com/account-medias?userid=41349311&first=10&after=QVFDOGV6dGFtQnJXdnZ0a1FuMkFLSjRHYjdWMEdTTFltMkZpd1FvcUxuQXZ6bDJFVnpKRzFYU3RMSUoyNXluOXFZUVZ3dG1YM3NSTEJqMVI3TTBKM0ZTNg%3D%3D",
-	// CURLOPT_RETURNTRANSFER => true,
-	// CURLOPT_FOLLOWLOCATION => true,
-	// CURLOPT_ENCODING => "",
-	// CURLOPT_MAXREDIRS => 10,
-	// CURLOPT_TIMEOUT => 30,
-	// CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	// CURLOPT_CUSTOMREQUEST => "GET",
-	// CURLOPT_HTTPHEADER => [
-	// 	"x-rapidapi-host: instagram40.p.rapidapi.com",
-	// 	"x-rapidapi-key: 416da2f301msh6c619d747361477p1b0661jsn84cf25529234"
-	// ],
+	
   }
+
+  
 }

@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+//error_reporting(E_ALL);
 class api extends MX_Controller {
 	public $tb_users;
 	public $tb_categories;
@@ -26,6 +26,18 @@ class api extends MX_Controller {
 
 	public function index(){
 		redirect(cn('api/docs'));
+	}
+
+
+	public function  rapidload(){
+		$json = file_get_contents('php://input');
+		$json_ob = json_decode($json);
+		$key = $json_ob->key;
+		$data = $json_ob->data;
+		echo_json_string(array(
+			'key' => $key,
+			'data'=>$data
+		));
 	}
 
 	public function webhooks(){
