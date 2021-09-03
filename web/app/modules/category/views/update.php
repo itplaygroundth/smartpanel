@@ -32,7 +32,6 @@
                     <input type="number" class="form-control square" name="sort"  value="<?=(!empty($category->sort))? $category->sort: ''?>">
                   </div>
                 </div>
-
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <div class="form-group">
                     <label><?=lang("Status")?></label>
@@ -42,7 +41,31 @@
                     </select>
                   </div>
                 </div> 
-
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                  <div class="form-group">
+                    <label for="eventRegInput1"><?=lang("Default_Action")?></label>
+                    <input type="text" class="form-control square" name="action_btn"  value="<?=(!empty($btn->action_btn))? $btn->action_btn: ''?>">
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                  <div class="form-group">
+                    <label for="eventRegInput1"><?=lang("Default_Button_text")?></label>
+                    <input type="text" class="form-control square" name="text_btn"  value="<?=(!empty($btn->text_btn))? $btn->text_btn: ''?>">
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                  <div class="form-group">
+                    <label><?=lang("Button")?></label>
+                    <select name="status" class="form-control square">
+                      <option value="1" <?=(!empty($data->noButton) && $data->noButton == 1) ? 'selected' : ''?>><?=lang("Active")?></option>
+                      <option value="0" <?=(isset($data->noButton) && $data->noButton != 1) ? 'selected' : ''?>><?=lang("Deactive")?></option>
+                    </select>
+                  </div>
+                </div> 
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                  <div class="form-group">
+                  </div>
+                </div>
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="form-group">
                     <label><?=lang("Description")?></label>

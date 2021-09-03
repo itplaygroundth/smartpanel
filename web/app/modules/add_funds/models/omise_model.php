@@ -33,7 +33,7 @@ class omise_model extends MY_Model {
 	function update_creditcard($data){
 		
 		//print_r($data);
-		$ids =  session('ids');
+		    $ids =  session('ids');
 			$check_item = $this->model->get("id, ids", $this->tb_creditcards, "ids = '{$ids}'");
 			
 			if(empty($check_item)){
@@ -76,20 +76,25 @@ class omise_model extends MY_Model {
 
 		$query = $this->db->get();
 		$result = $query->result();
-		$data.push($result);
+		$data[]=$result;
 		return $data;
+	}
+
+	public function get_cardtoken($token){
+		return OmiseToken::retrieve($token);
 	}
 
 	public function card_token($omise_card)
     {
         try {
-            $token = \OmiseToken::create(
-                array(
-          'card' => array(
+            $token = \OmiseToken::create(array(
+            
+            'card' => array(
             'name'             => $omise_card['omise_card_name'],
             'number'           => $omise_card['omise_card_number'],
             'expiration_month' => $omise_card['omise_card_month'],
             'expiration_year'  => $omise_card['omise_card_year'],
+			"city"			   => "bangkok",
             'security_code'    => $omise_card['omise_card_cvv']
             )
           )
@@ -116,53 +121,6 @@ class omise_model extends MY_Model {
 	
 	}
 
-    // public function destroy($user_id)
-    // {
-    //     // Assign Omise Key
-    //     define('OMISE_PUBLIC_KEY', get_option("omise_merchant_key"));
-    //     define('OMISE_SECRET_KEY', get_option("omise_merchant_secret"));
-
-    //     $payment = Database::get('*', 'payments', ['payer_id' => $user_id], 'id DESC');
-    //     if (isset($payment)) {
-    //         if ($payment->type == 'recurring') {
-    //             $schedule = \OmiseSchedule::retrieve($payment->payment_id);
-    //             $schedule->destroy();
-    //             return ['is_payment' => true, 'status' => $schedule->isDestroyed()];
-    //         }
-    //     } else {
-    //         return ['is_payment' => false, 'status' => false];
-    //     }
-    // }
-		//$creditcards = $query->result();
-		//  if(!empty($creditcards)){
-		//  	$i = 0;
-		//  	foreach ($creditcards as $key => $row) {
-		//  		$i++;
-		// 		// get services
-		// 		if ($i > 0) {
-					 
-		// 				$this->db->select('s.*, api.name as api_name');
-		// 				$this->db->from($this->tb_services." s");
-		// 				$this->db->join($this->tb_api_providers." api", "s.api_provider_id = api.id", 'left');
-		// 				$this->db->where('s.cate_id', $row->id);
-		// 				$this->db->where('s.status', 1);
-		// 				$this->db->order_by("s.price", 'ASC');
-
-		// 				$query = $this->db->get();
-		// 				$services = $query->result();
-					
-		// 			if(!empty($services)){
-		// 				$creditcards[$key]->is_exists_services = 1;
-		// 				$creditcards[$key]->services = $services;
-		// 			}else{
-		// 				unset($creditcards[$key]);	
-		// 			}
-		// 		}else{
-		// 			break;
-		// 		}
-		// 	}
-		//}
-		
-//	}
+    
 
 }

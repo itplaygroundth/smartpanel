@@ -1,13 +1,13 @@
 <?php echo $_POST['url_path'] ?>
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<div class="modal fade" id="serviceModal" tabindex="-1" role="dialog" aria-labelledby="serviceModalTitle" aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Post Choose</h5>
-                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button> -->
+                <h5 class="modal-title" id="serviceModalTitle">Post Choose</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <!-- <span aria-hidden="true">&times;</span> -->
+                        </button>
             </div>
             <div class="modal-body">
                 <section id="landing-services-likes" class="service-section">
@@ -34,14 +34,15 @@
                 </section>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+     $(function() {
     var url_path = "";
     var mediatype = "";
     $("select[name='category_id']").on('change', function() {
@@ -51,6 +52,7 @@
                     el))
                 return el
         })
+        
         if (category.length > 0) {
             $("#modal_view").prop('disabled', false)
 
@@ -62,7 +64,24 @@
             $("#modal_view").prop('disabled', true)
             mediatype = ""
         }
-
+         var _action = "<?php echo cn(); ?>" + "category/getdata",
+             _token = '<?php echo strip_tags($this->security->get_csrf_hash()); ?>',
+             _data = $.param({
+                         token: _token,
+                         category_id: $("select[name='category_id'] option").filter(':selected').val()
+                     })
+                    $.post(_action, _data, function(_result) {
+                     var response =  JSON.parse(_result);
+                     var btn = JSON.parse(response.data);
+                     if(btn!=null){
+                     $("#modal_view").prop('value',btn.text_btn)
+                     }
+                     //console.log(response.data.replace(/\\/g,""));
+                    //  response.data.forEach((element) =>  {
+                    //     console.log(element)
+                    //  })
+                    })
+                
     })
     function addlink(url){
 
@@ -70,9 +89,20 @@
             if ($("select[name='category_id'] option").filter(':selected').text().toLowerCase().includes(el))
                 return el
         })
+        switch(category){
+            case 'instagram':
+                url='https://www.'+category+'.com/p/'+url
+                break;
+            case 'tiktok':
+                break;
+                
         
-        url='https://www.'+category+'.com/p/'+url
-        $("input[name='link']").prop('value',url);    
+        }
+        
+        $("input[name='link']").prop('value',url);
+        $("input[name='username']").prop('value','')
+        $("#post-list").prop('html','')
+        $('#serviceModal').modal('hide');
 
     }
     $("#btn_load").on('click', function() {
@@ -89,7 +119,7 @@
                      response.data.forEach((element) =>  {
                        
                         // $("#likes-posts-illustration").append(`<div class="tl post"><img  id="views-post-tl-canvas-`+element.id+`" src="`+element.thumbnail_src+`" size=150 /><option value="`+element.shortcode+`"></option></div>`)
-                         $("#post-list").append(`<a href="javascript:addlink('`+element.shortcode+`')" class="post">
+                         $("#post-list").append(`<a href="javascript:addlink('`+element.shortcode+`')" class="post" >
                             <figure class="post-image">
                             <img src="`+element.thumbnail_src+`" alt="">
                             </figure>
@@ -107,6 +137,9 @@
                     //var _result= JSON.parse(_result)
                     //console.log(_result)
     });
+   
+       
+      });
 </script>
 <style>
     

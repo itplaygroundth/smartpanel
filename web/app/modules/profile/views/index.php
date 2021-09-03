@@ -104,6 +104,7 @@
                   $skype_id   = get_value($infors, "skype_id");
                   $what_asap  = get_value($infors, "what_asap");
                   $address    = get_value($infors, "address");
+                  $account_number = get_value($infors,"account_number");
                 }
               ?>  
               <div class="col-md-6 col-sm-6 col-xs-6">
@@ -139,6 +140,13 @@
                   <label for="projectinput5"><?=lang('Address')?></label>
                   <input class="form-control square" name="address" type="text" value="<?=(!empty($address))? $address: ''?>">
                   <small class="text-primary"><?=lang("note_if_you_dont_want_add_more_information_then_leave_these_informations_fields_empty")?></small>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-6">
+                <div class="form-group">
+                  <label for="projectinput5"><?=lang('Bank Account Number')?></label>
+                  <input class="form-control square" name="account_number" type="text" value="<?=(!empty($account_number))? $account_number: ''?>">
+                  <!-- <small class="text-primary"><?=lang("note_if_you_dont_want_add_more_information_then_leave_these_informations_fields_empty")?></small> -->
                 </div>
               </div>
               <div class="col-md-12 col-sm-12 col-xs-12 form-actions left">

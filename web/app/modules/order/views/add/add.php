@@ -25,7 +25,7 @@
                   </div>
                   <div class="form-group">
                     <label><?=lang("Category")?></label>
-                    <select name="category_id" class="form-control square ajaxChangeCategory" data-url="<?=cn($module."/get_services/")?>">
+                    <select name="category_id" class="form-control square ajaxChangeCategory" data-url="<?=cn($module."/get_services/")?>" tabindex="2">
                       <option> <?=lang("choose_a_category")?></option>
                       <?php
                         if (!empty($categories)) {
@@ -36,12 +36,7 @@
                       <?php }}?>
                     </select>
                   </div>
-                  <div id="btn_views" class="left ">
-                    <input type="button" id="modal_view" class="btn btn-info btn-min-width mr-1 mb-1" data-toggle="modal" data-target="#exampleModalLong"
-                      value="<?=lang("Views")?>" disabled />
-                    
-
-                  </div>
+                  
                   <!-- Modal -->
                  
                          <?php require_once("rapidview.php")?>
@@ -84,7 +79,10 @@
                       </div>
                     </div>
                   </div>
-                  
+                  <div id="btn_views" class="left" >
+                    <input type="button" id="modal_view" class="btn btn-info btn-min-width mr-1 mb-1" data-toggle="modal" data-target="#serviceModal"
+                      value="load_view" disabled />
+                  </div>
                   <div class="form-group order-default-link">
                     <label><?=lang("Link")?></label>
                     <input class="form-control square" type="text" name="link" placeholder="https://" id="">

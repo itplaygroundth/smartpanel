@@ -30,6 +30,18 @@ services:
     depends_on:
        - smm_mysql
   
+  kbank:
+    container_name: kbank
+    build:
+      context: ./kbank
+      dockerfile: ./Dockerfile
+    env_file: .env
+    volumes:
+      - ./kbank:/app
+    ports:
+      - "8007:80"
+    working_dir: /app
+
   cronjob:
     container_name: cronjob
     build: 

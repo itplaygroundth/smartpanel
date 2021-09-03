@@ -1,6 +1,4 @@
 <div class="row justify-content-md-center">
-    <form id="frm-truewallet" method="post" class="form omisepayForm" action="<?=cn($module."/omise/checkotp")?>"
-        data-redirect="<?=cn($module)."/omise/successfuly"?>" >
         <div class="container  justify-content-center">
                     <div class="card p-5">
                         <div class="card-header d-flex align-items-center">
@@ -14,19 +12,24 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="omise_otp" class="form-label">OTP:</label>
-                                <input type="text" id="omise_otp" class="form-control" name="omise_otp">
+                                <h1>Wait for process</h1>
+                                <!-- <input type="text" id="omise_otp" class="form-control" name="omise_otp">
                                 <input type="hidden" name="payment_method" value="<?=$payment_method?>" />
-                                <button id="submit" class="btn"><b><?=lang("process")?></b></button>
+                                <button id="submit" class="btn"><b><?=lang("process")?></b></button> -->
                            
                             </div>
-                         
                         </div>
-                    
                     </div>
-         
         </div>
-    </form>
+    
 </div>
+<script>
+
+    $(document).ready(function(){
+    var strWindowFeatures = "location=yes,height=570,width=520,scrollbars=yes,status=yes";
+    window.open('<?=$authorize_uri?>','_blank',strWindowFeatures);
+})
+</script>
 <style>
 form .row-1 {
     border: 1px solid rgba(0, 0, 0, 0.137);

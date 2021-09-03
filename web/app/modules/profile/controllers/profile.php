@@ -127,6 +127,7 @@ class profile extends MX_Controller {
 		$skype_id           = post('skype_id');
 		$what_asap          = post('what_asap');
 		$address            = post('address');
+		$account_number     = post('account_number');
 
 		$more_information = array(
 			"website"         => $website,
@@ -134,6 +135,7 @@ class profile extends MX_Controller {
 			"what_asap"       => $what_asap,
 			"skype_id"        => $skype_id,
 			"address"         => $address,
+			"account_number"  => $account_number
 		);
 
 		$data = array(

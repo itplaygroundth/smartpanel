@@ -1,8 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-// ini_set('display_errors', '1');
-// ini_set('display_startup_errors', '1');
-//error_reporting(E_ALL);
+ 
+//require_once (APPPATH . "modules/controllers/pusher.php");
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 class api extends MX_Controller {
 	public $tb_users;
 	public $tb_categories;
@@ -11,16 +13,28 @@ class api extends MX_Controller {
 	public $api_key;
 	public $uid;
 	public $tb_transaction_logs;
+	public $pusher;
+     public $cluster;
+     public $key;
+     public $secret;
+     public $id;
+	//public $pushing;
 
 	public function __construct(){
 		parent::__construct();
 		$this->load->model(get_class($this).'_model', 'model');
+		//$this->pushing = $this->load->module('pusher');
 		//Config Module
 		$this->tb_users      = USERS;
 		$this->tb_categories = CATEGORIES;
 		$this->tb_services   = SERVICES;
 		$this->tb_orders     = ORDER;
 		$this->tb_transaction_logs   = TRANSACTION_LOGS;
+		$this->cluster =  getenv('PUSHER_CLUSTER');
+        $this->key = getenv('PUSHER_KEY');
+        $this->secret = getenv('PUSHER_SECRET');
+        $this->id = getenv('PUSHER_ID');
+       
 		
 	}
 
@@ -40,31 +54,67 @@ class api extends MX_Controller {
 		));
 	}
 
+ 
 	public function webhooks(){
 		$params = [];
 		
 		 
 		$params = $_POST;
+		$options = array(
+            'cluster' => 'ap1',
+            'useTLS' => true
+        );
 		
+        //echo APPPATH .'vendor/autoload.php';
+         $this->pusher = new Pusher\Pusher(
+            //  $this->key,
+            //  $this->secret,
+            //  $this->id,
+			"eb32eebfd55f1a957dfa",
+			"291bf34d16dd605bd7e2",
+			"1260360",
+             $options
+         );
+
 		$json = file_get_contents('php://input');
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
 		$charge = $json_ob->data;
 		$transaction_id = $charge->source->id;
-		$dbtr=get_transaction_byid($transaction_id);
+		$dbtr=$this->model->get_transaction_byid($transaction_id);
 		 if($key == 'charge.complete' ){
 					$data = array(
 						"status"            => $charge->status=='failed'?2:1,
 						"data"              => $charge->status=='failed'?$charge->failure_message:""
 					 );
-					$this->db->update($this->tb_transaction_logs, $data,['transaction_id'=>$transaction_id]);
-					set_session("transaction_id", $transaction_id);
-					if($charge->status!='failed'){
-						
-					// $user_balance = get_field($this->tb_users, ["id" => $dbtr['uid']], "balance");
-                    // $user_balance += ($charge->data->amount-(($charge->data->amount/100)*$transaction_fee))/100;//session("real_amount");
-                    // $this->db->update($this->tb_users, ["balance" => $user_balance], ["id" => $user_id]);
-					}
+					 $check_item = $this->model->get("*", $this->tb_transaction_logs, ['transaction_id' => $transaction_id]);
+					  
+					 if(!empty($check_item)){
+			 
+						  
+						 $this->db->update($this->tb_transaction_logs, $data, ['uid' => $check_item->uid, 'transaction_id' => $check_item->transaction_id, 'type' => $check_item->type]);
+						 if ($data['status'] == 1 && $check_item->status == 0) {
+							 $user_balance = $this->model->get("balance", $this->tb_users, ['id' => $check_item->uid])->balance;
+							 $new_balance = $user_balance + ($check_item->amount - $check_item->txn_fee);
+							 $this->db->update($this->tb_users, ["balance" => $new_balance], ["id" => $check_item->uid]);
+						 }
+						 if ($this->db->affected_rows() > 0) {
+							 set_session('transaction_id',$check_item->transaction_id);
+							 $data['message'] =  echo_json_string(
+								array(
+									 	 "status"  => "success",
+										 "transaction_id"=>$check_item->transaction_id,
+									 	 "message" => lang("{$check_item->transaction_id} Update_successfully")
+									  )
+								);
+							
+							$this->pusher->trigger('my-channel', 'my-event', $data);
+							 
+						 }
+						 
+			 
+					 }
+					
 		}
 		
 	}

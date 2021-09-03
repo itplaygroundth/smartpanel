@@ -34,7 +34,7 @@
 
                 <?php
                   $get_payments_method = get_payments_method();
-                  $get_payments_method = array_merge($get_payments_method, ['paypal', 'stripe', '2checkout']);
+                  $get_payments_method = array_merge($get_payments_method, ['paypal', 'stripe', '2checkout','offline']);
                 ?>
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="form-group">

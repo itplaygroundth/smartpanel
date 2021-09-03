@@ -124,4 +124,19 @@
     </div>
   </div>
 </footer>
+<script type="text/javascript">
+    var count = 20; // Timer
+    var redirect = "/statistics"; // Target URL
+
+    function countDown() {
+        var timer = document.getElementById("timer"); // Timer ID
+        if (count > 0) {
+            count--;
+            timer.innerHTML = "<h3>This page will redirect in " + count + " seconds. </h3>"; // Timer Message
+            setTimeout("countDown()", 1000);
+        } else {
+            window.location.href = redirect;
+        }
+    }
+</script>
 

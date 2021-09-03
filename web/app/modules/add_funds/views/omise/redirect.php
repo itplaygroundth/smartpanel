@@ -12,37 +12,8 @@
 </svg>
 </div>
 </center>
-<div class="panel">
-        <div class="inner">
-            <!-- <fieldset>
-                <dl>
-                    <dt><label>แพ็กเกจที่เลือก</label></dt>
-                    <dd><input type="text"  class="inputbox autowidth" name="package_name"  size="20" maxlength="255" value="{PACKAGE_NAME_CONCLUDE}"></dd>
-                </dl>
-                <dl>
-                    <dt><label>ราคา</label></dt>
-                    <dd><input type="text"  class="inputbox autowidth" name="package_price" size="20" maxlength="255" value="{PACKAGE_PRICE_CONCLUDE}"></dd>
-                </dl>
-                <dl>
-                    <dt><label for="timezone">วิธีการชำระเงิน</label></dt>
-                    <dd>     
-                        <form id="checkoutForm" method="POST" action="{T_ACTION}">
-                            <input type="hidden" name="pay" value="save_cradit">
-                            <input type="hidden" name="next_id" value="{ID_NEW}">
-                            <input type="hidden" name="price" value="{PACKAGE_PRICE_OMISE}">
-                            <script type="text/javascript" src="https://cdn.omise.co/omise.js"
-                                    data-key="pkey_test_5icyktbp782n4udybo0" //ส่วนนี้เป็นส่วนที่จำใส่ key public จาก omise
-                                    data-amount="{PACKAGE_PRICE_OMISE}"  //ส่วนนี้เป็นส่วนที่จะส่งค่าจำนวนเงิน
-                                    data-currency="THB" //ใส่สกุลเงิน
-                                    data-default-payment-method="credit_card">
-                            </script>
-                        </form>
-                    </dd>
-                </dl>
-            </fieldset> -->
-        </div>
-    </div>
-<!-- <form action="https://cdn.omise.co/pay.html" method="POST" name="f1">
+
+<form action="<?=$authorize_uri?>" method="GET" name="f1">
     
     <?php
         // foreach($paramList as $name => $value) {
@@ -53,8 +24,4 @@
     <script type="text/javascript">
         document.f1.submit();
     </script>
-</form> -->
-
-
- 
-    
+</form>

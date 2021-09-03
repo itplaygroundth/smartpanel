@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
- 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 class category extends MX_Controller {
 	public $tb_users;
 	public $tb_categories;
@@ -23,6 +25,7 @@ class category extends MX_Controller {
 			"desc"             => lang("Description"),
 			"sort"             => lang("Sorting"),
 			"status"           => lang("Status"),
+			
 		);
 	}
 
@@ -49,7 +52,7 @@ class category extends MX_Controller {
 		$links = $this->pagination->create_links();
 
 		$categories = $this->model->get_category_lists(false, "all", $limit_per_page, $page * $limit_per_page);
-
+	
 		$data = array(
 			"module"     => get_class($this),
 			"columns"    => $this->columns,
@@ -64,10 +67,11 @@ class category extends MX_Controller {
 	public function update($ids = ""){
 
 		$category = $this->model->get("*", $this->tb_categories, "ids = '{$ids}'");
-
+		
 		$data = array(
 			"module"   => get_class($this),
 			"category" => $category,
+			"btn"        => json_decode($category->data),
 		);
 		$this->load->view('update', $data);
 	}
@@ -77,6 +81,7 @@ class category extends MX_Controller {
 		$image	    = post("image");
 		$sort 		= (int)post("sort");
 		$status 	= (int)post("status");
+		$btndata    = array("action_btn"=>post("action_btn"),"text_btn"=>post("text_btn"),"noButton"=>post("noButton"));
 		$desc 		= $this->input->post("desc");
 		$desc       = trim($desc);
 		$desc       = stripslashes($desc);
@@ -103,6 +108,7 @@ class category extends MX_Controller {
 			"image"           => $image,
 			"status"          => $status,
 			"sort"            => $sort,
+			"data"			  => $btndata
 		);
 
 		$check_item = $this->model->get("id, ids", $this->tb_categories, "ids = '{$ids}'");
@@ -129,6 +135,15 @@ class category extends MX_Controller {
 	
 	public function ajax_delete_item($ids = ""){
 		$this->model->delete($this->tb_categories, $ids, false);
+	}
+
+	public function getdata(){
+		$id= post('category_id');
+		$check_item = $this->model->get("data", $this->tb_categories, "id = '{$id}'");
+		echo_json_string(array(
+			'data' 		=> $check_item->data
+		));
+		//return $result;
 	}
 
 	public function ajax_actions_option(){

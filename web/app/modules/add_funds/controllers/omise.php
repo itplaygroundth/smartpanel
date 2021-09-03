@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  ini_set('display_errors', '1');
  ini_set('display_startup_errors', '1');
  error_reporting(E_ALL);
-require_once(APPPATH.'modules/add_funds/libraries/omise_php/lib/Omise.php');
+//require_once(APPPATH.'modules/add_funds/libraries/omise_php/lib/Omise.php');
 
 class omise extends MX_Controller {
 	 
@@ -27,6 +27,7 @@ class omise extends MX_Controller {
 	    
 		parent::__construct();
         $this->load->model(get_class($this).'_model', 'model');
+        $this->load->helper('url');
 		$this->tb_users            = $this->model->tb_users;
         $this->tb_creditcards      = CREDITCARDS;
 		$this->tb_transaction_logs = TRANSACTION_LOGS;
@@ -77,7 +78,7 @@ class omise extends MX_Controller {
 		
 		//$amount = post("amount");
 		//$agree  = post("agree");
-         
+        $charge = NULL;
         $source = NULL;
         $user_id =session('uid');
         $transaction_id = "";
@@ -106,15 +107,16 @@ class omise extends MX_Controller {
             
             if(count($this->model->get_card_lists())>0){
                 $creditcards=$this->model->get_card_lists();
-               // print_r($creditcards);
-                $card_token = $this->model->card_token([
-                    'omise_card_name' => $creditcards[0]->name,
-                    'omise_card_number' => preg_replace("/\s+/", "", $creditcards[0]->creditcardno),
-                    'omise_card_month' => $creditcards[0]->month,
-                    'omise_card_year' => $creditcards[0]->year,
-                    'omise_card_cvv' => preg_replace("/\s+/", "", post('selected_cvc')),
-                ]);
-                $token_id = $card_token['id'];
+                //$card_token = $this->model->get_cardtoken($creditcards[0]->omise_token_id);
+                // $card_token = $this->model->card_token([
+                //     'omise_card_name' => $creditcards[0]->name,
+                //     'omise_card_number' => preg_replace("/\s+/", "", $creditcards[0]->creditcardno),
+                //     'omise_card_month' => $creditcards[0]->month,
+                //     'omise_card_year' => $creditcards[0]->year,
+                //     'omise_card_cvv' => preg_replace("/\s+/", "", post('selected_cvc')),
+                // ]);
+               
+                $token_id = $creditcards[0]->omise_token_id;//$card_token['id'];
                  } else {
                 
 
@@ -125,6 +127,7 @@ class omise extends MX_Controller {
                             'omise_card_year' => explode("/",post('cardexpire'))[1],
                             'omise_card_cvv' => preg_replace("/\s+/", "", post('cardccv')),
                         ]);
+                        print_r($card_token);
                         $data = array(
                             "ids"             => session("ids"),
                             "uid"             => session("uid"),
@@ -144,7 +147,7 @@ class omise extends MX_Controller {
                     
 
                     if(empty($omise_customer_id)){
-                        $customer = \OmiseCustomer::create([
+                        $customer = OmiseCustomer::create([
                             'email' => $user_email,
                             'description' => $user_name,
                             'card' => $token_id
@@ -152,8 +155,8 @@ class omise extends MX_Controller {
                         $this->model->update_omiseid($customer['id']);
                         $omise_customer_id = $customer['id'];
                     }else {
-                        $omise_customer = \OmiseCustomer::retrieve($omise_customer_id);
-                        $cards = $omise_customer->getCards();
+                        $omise_customer = OmiseCustomer::retrieve($omise_customer_id);
+                        $cards = $omise_customer['cards'];
                         if (empty($cards['data'])) {
                             $omise_customer->update([
                             'card' => $token_id,
@@ -202,11 +205,32 @@ class omise extends MX_Controller {
                         ));
                     }
         } else if($payment_method == "offline") {
-        
+        //     $data = array(
+        //         "module"        => 'add_funds',
+        //         "amount"        =>  number_format((float)$total, 2, '.', ''),
+        //         "omise_key"      => get_option("omise_merchant_key"),
+        //         "omise_secret"   => get_option("omise_merchant_secret"),
+        //         "currency"       => $this->currency_code,
+        //         "currency_rate"  => $this->currency_rate,
+        //         "omisetoken"     => session("omisetoken"),
+        //         //"payment_method" => $payment_method,
+        //         "image_file"     => "",
+        //         "user_info"      => json_decode($this->user_info[0]->more_information)
+                
+        //     );
+        //     $this->load->view('omise/offline', $data);
+           
+        // }else if($payment_method == "payoffline"){
             $this->offline();
         } else if($payment_method == 'truewallet'){
-            echo $payment_method;
-            echo post('omise_otp');
+           // echo $payment_method;
+            //echo post('omise_otp');
+            $data=array(
+                "payment_method" => $payment_method
+            );
+
+            //$this->checkotp();
+            //$this->load->view('omise/successful', $data);
         }
 
         
@@ -244,7 +268,9 @@ class omise extends MX_Controller {
         $phone_number = post('omise_phonenumber');
         $total = session('amount');
         $payment_method = post('payment_method');
-        $return_uri = cn('add_funds')."/complete";
+        $return_uri = cn('add_funds')."/omise/checkotp";
+        $authorize_uri="";
+        $ids = ids();
         try {
             $email = get_field(USERS, ['id' => session('uid')], "email");
       
@@ -254,12 +280,12 @@ class omise extends MX_Controller {
                 'email'       => $email,
                 'source'      => array( 'type' => 'truemoney', 'phone_number' => $phone_number ),
                 //'source'      => $source['id'],
-                'return_uri'  => $return_uri
+                'return_uri'  => $return_uri."?ids={$ids}"
             ));
             //print_r($charge);
-            $transaction_id = $charge['source']['id'];
+       $transaction_id = $charge['source']['id'];
        $data = array(
-                "ids" 				=> ids(),
+                "ids" 				=> $ids,
                 "uid" 				=> session('uid'),
                 "type" 				=> $charge['source']['type'],
                 "transaction_id" 	=> $transaction_id,
@@ -269,7 +295,7 @@ class omise extends MX_Controller {
              );
         $this->db->insert($this->tb_transaction_logs, $data);
         $transaction_id = $this->db->insert_id();
-         
+        $authorize_uri = $charge['authorize_uri'];
          $data = array(
              "module"        => 'add_funds',
              "amount"        =>  number_format((float)$this->amount, 2, '.', ''),
@@ -279,15 +305,17 @@ class omise extends MX_Controller {
              "payment_method" => $payment_method,
              "currency_rate"  => $this->currency_rate,
              "omisetoken"     => session("omisetoken"),
+             'authorize_uri'  => $authorize_uri,
              "omise_phonenumber"=>$phone_number,
              //"charger"=>$charge
         //     //"qr"             => $source['scannable_code']['image']['download_uri'],
         //     "amount_group"   => $this->amount_group
             
          );
-
-        // $this->template->build('omise/otp', $data);
-        $this->load->view('omise/otp', $data);
+         $this->load->view("omise/redirect", $data);
+        // redirect($authorize_uri,'location',301);
+       //  $this->load->view('omise/otp', $data);
+        //$this->load->view('omise/otp', $data);
         }
         catch( OmiseBadRequestException $ex)
         {
@@ -296,7 +324,19 @@ class omise extends MX_Controller {
     }
 
     public function checkotp(){
-        print_r(post());
+        $ids= get('ids');
+   
+		$transaction = $this->model->get("*", $this->tb_transaction_logs, "ids = '{$ids}' AND uid ='".session('uid')."'");
+        
+        $data = array(
+            "module"        => get_class($this),
+            "transaction"   => $transaction,
+        );
+        if($transaction->status==1){
+            $this->template->build('payment_successfully', $data);
+        }else {
+            $this->template->build('payment_unsuccessfully', $data);
+        }
     }
 
   
@@ -364,6 +404,8 @@ class omise extends MX_Controller {
     }
 
     public function truewallet(){
+
+        $creditcards = NULL;
         $payment_method = post('payment_method');
         $data = array(
 			"module"        => 'add_funds',
@@ -383,6 +425,7 @@ class omise extends MX_Controller {
         $this->template->build('omise/truewallet', $data);
     }
     public function creditcard(){
+        $data= NULL;
         $charge = OmiseCharge::create(array(
             'amount' => $this->amount*100,
             'currency' => 'thb',
@@ -394,6 +437,7 @@ class omise extends MX_Controller {
         $this->load->view("omise/redirect", $data);
     }
     public function qrcode(){
+        $data = NULL;
         $charge = OmiseCharge::create(array(
             'amount' => $this->amount*100,
             'currency' => 'thb',
@@ -430,15 +474,13 @@ class omise extends MX_Controller {
 		//$this->load->view("omise/webhook", $data);
     }
 
-    public function callback(){
-
-    }
+    
 
    
 	public function complete(){
 
 		$ref_id = $this->input->get("ref_id"); // ใช้ ref_id คิวรี่หา charge_id แล้วใช้หาค่า status ว่า transaction นี้สำเร็จหรือไม่สำเร็จ
-		
+		$charge_id = NULL;
 		$charge = OmiseCharge::retrieve($charge_id);
         if($charge['status'] === 'successful') {
            // เงินเข้าบัญชีเรียบร้อยแล้ว
@@ -456,9 +498,16 @@ class omise extends MX_Controller {
 				"transaction"   => $transaction,
 			);
 			unset_session("transaction_id");
+           
             //redirect(cn("add_funds/success"));
 			//$this->load->view('omise/successful', $data);
+            if($transaction->status==1){
             $this->template->build('payment_successfully', $data);
+            }else if($transaction->status==0){
+                $this->template->build('payment_waitproof', $data);
+            } else if($transaction->status==2){
+                $this->template->build('payment_unsuccessfully', $data);
+            }
 		}else{
             
 			redirect(cn("add_funds"));

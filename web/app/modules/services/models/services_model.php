@@ -177,7 +177,7 @@ class services_model extends MY_Model {
 		if (get_role("user")) {
 			$this->db->where("status", "1");
 		}
-		$this->db->select("id, ids, name");
+		$this->db->select("id, ids, name, data");
 		$this->db->from($this->tb_categories);
 		$this->db->order_by("sort", 'ASC');
 		$query = $this->db->get();

@@ -57,6 +57,7 @@ class order extends MX_Controller {
 	public function add(){
 		$this->load->model("services/services_model", 'services_model');
 		$categories = $this->services_model->get_active_categories();
+		
 		$data = array(
 			"module"       => get_class($this),
 			'categories'   => $categories,

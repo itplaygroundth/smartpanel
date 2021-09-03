@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'eeaa1a3735f8bcc871d77d9368edcd5614de4bfe',
+    'reference' => 'f7b66d797c650d6fe0cbe3e60bde33d26497e64d',
     'name' => '__root__',
   ),
   'versions' => 
@@ -44,7 +44,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'eeaa1a3735f8bcc871d77d9368edcd5614de4bfe',
+      'reference' => 'f7b66d797c650d6fe0cbe3e60bde33d26497e64d',
     ),
     'cboden/ratchet' => 
     array (
@@ -64,6 +64,24 @@ private static $installed = array (
       ),
       'reference' => '531bfb9d15f8aa57454f5f0285b18bec903b8fb7',
     ),
+    'guzzlehttp/guzzle' => 
+    array (
+      'pretty_version' => '7.3.0',
+      'version' => '7.3.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '7008573787b430c1c1f650e3722d9bba59967628',
+    ),
+    'guzzlehttp/promises' => 
+    array (
+      'pretty_version' => '1.4.1',
+      'version' => '1.4.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '8e7d04f1f6450fef59366c399cfad4b9383aa30d',
+    ),
     'guzzlehttp/psr7' => 
     array (
       'pretty_version' => '1.8.2',
@@ -72,6 +90,40 @@ private static $installed = array (
       array (
       ),
       'reference' => 'dc960a912984efb74d0a90222870c72c87f10c91',
+    ),
+    'paragonie/random_compat' => 
+    array (
+      'pretty_version' => 'v9.99.100',
+      'version' => '9.99.100.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '996434e5492cb4c3edcb9168db6fbb1359ef965a',
+    ),
+    'paragonie/sodium_compat' => 
+    array (
+      'pretty_version' => 'v1.17.0',
+      'version' => '1.17.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'c59cac21abbcc0df06a3dd18076450ea4797b321',
+    ),
+    'psr/http-client' => 
+    array (
+      'pretty_version' => '1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '2dfb5f6c5eff0e91e20e913f8c5452ed95b86621',
+    ),
+    'psr/http-client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
     ),
     'psr/http-message' => 
     array (
@@ -97,6 +149,15 @@ private static $installed = array (
       array (
       ),
       'reference' => 'd49695b909c3b7628b6289db5479a1c204601f11',
+    ),
+    'pusher/pusher-php-server' => 
+    array (
+      'pretty_version' => '7.0.1',
+      'version' => '7.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '7757a09209d20ff95b077ae48dc25f49a6ad94a2',
     ),
     'ralouphie/getallheaders' => 
     array (
