@@ -1,0 +1,4 @@
+{$URL_FRONTEND_HOME} {
+  reverse_proxy smm_app:80
+  tls internal
+}

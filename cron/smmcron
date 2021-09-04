@@ -1,0 +1,3 @@
+* * * * * wget --spider -O - http://app/api_provider/cron/order >/dev/null 2>&1
+* * * * * wget --spider -O - http://app/api_provider/cron/status >/dev/null 2>&1
+* * * * * wget --spider -O - http://app/api_provider/cron/status_subscriptions >/dev/null 2>&1
