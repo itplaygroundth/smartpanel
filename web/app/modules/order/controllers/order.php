@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
- 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 class order extends MX_Controller {
 	public $tb_users;
 	public $tb_users_price;
@@ -53,6 +55,18 @@ class order extends MX_Controller {
 	public function index(){
 		redirect(cn("order/add"));
 	}
+
+	public function getdata(){
+		$id= post('category_id');
+		 
+		$check_item = $this->model->get("data", $this->tb_categories, "id = '{$id}'");
+		//print_r($check_item);
+		echo_json_string(array(
+			'data' 		=> $check_item->data
+		));
+		//return $result;
+	}
+
 
 	public function add(){
 		$this->load->model("services/services_model", 'services_model');

@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'f7b66d797c650d6fe0cbe3e60bde33d26497e64d',
+    'reference' => '8b32fb278a3902a0c262a42e1194f7efab42b676',
     'name' => '__root__',
   ),
   'versions' => 
@@ -44,7 +44,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'f7b66d797c650d6fe0cbe3e60bde33d26497e64d',
+      'reference' => '8b32fb278a3902a0c262a42e1194f7efab42b676',
     ),
     'cboden/ratchet' => 
     array (
@@ -90,6 +90,15 @@ private static $installed = array (
       array (
       ),
       'reference' => 'dc960a912984efb74d0a90222870c72c87f10c91',
+    ),
+    'harvesthq/chosen' => 
+    array (
+      'pretty_version' => 'v1.8.7',
+      'version' => '1.8.7.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'ad86732b668627c131e61ee8f0e6e9ed52e4db8d',
     ),
     'paragonie/random_compat' => 
     array (

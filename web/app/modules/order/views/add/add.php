@@ -25,7 +25,8 @@
                   </div>
                   <div class="form-group">
                     <label><?=lang("Category")?></label>
-                    <select name="category_id" class="form-control square ajaxChangeCategory" data-url="<?=cn($module."/get_services/")?>" tabindex="2">
+                    <select name="category_id" class="chosen-select form-control square ajaxChangeCategory" data-url="<?=cn($module."/get_services/")?>" tabindex="2">
+                    <!-- <select name="category_id" class="chosen-select" data-url="<?=cn($module."/get_services/")?>" tabindex="2"> -->
                       <option> <?=lang("choose_a_category")?></option>
                       <?php
                         if (!empty($categories)) {
@@ -44,7 +45,7 @@
                           
                   <div class="form-group" id="result_onChange">
                     <label><?=lang("order_service")?></label>
-                    <select name="service_id"  id="service_option" class="form-control square ajaxChangeService" data-url="<?=cn($module."/get_service/")?>">
+                    <select name="service_id"  id="service_option" class="chosen-select form-control square ajaxChangeService" data-url="<?=cn($module."/get_service/")?>">
                       <option> <?=lang("choose_a_service")?></option>
                       <?php
                         if (!empty($services)) {
@@ -317,7 +318,7 @@
           </div>
           <div id="mass_order" class="tab-pane fade">
             <form class="form actionForm" action="<?=cn($module."/ajax_mass_order")?>" data-redirect="<?=cn($module."/log")?>" method="POST">
-              <div class="x_content row">
+            <?php require_once("mass_order.php")?>              <!-- <div class="x_content row">
                 <div class="col-md-6 col-sm-12 col-xs-12">
                   <div class="content-header-title">
                     <h6> <?=lang("one_order_per_line_in_format")?></h6>
@@ -342,7 +343,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="form-actions left">
                 <button type="submit" class="btn round btn-primary btn-min-width mr-1 mb-1">
                   <?=lang("place_order")?>
@@ -355,7 +356,7 @@
     </div>
   </div>
 </div>
- 
+<link rel="stylesheet" href="<?=BASE?>/assets/css/chosen.css">
 <style>
  
     
@@ -424,7 +425,7 @@
 </div>
 <?php }; ?>
 
-
+<script src="<?=BASE?>/assets/js/chosen.jquery.min.js" type="text/javascript"></script>
 <script>
   $(function(){
     $('#exampleModalLong').modal('handleUpdate')
@@ -450,7 +451,7 @@
             }
         }
     });
-    
+    $(".chosen-select").chosen({width: "95%"})
    
   });
  

@@ -460,6 +460,7 @@ function General(){
         // callback ajaxChangeCategory
         $(document).on("change", ".ajaxChangeCategory" , function(){
             event.preventDefault();
+
             $("#new_order .drip-feed-option").addClass("d-none");
             if ($("#order_resume").length > 0) {
                 $("#order_resume input[name=service_name]").val("");
@@ -493,7 +494,7 @@ function General(){
             _id           = _that.val();
             _dripfeed     = _that.children("option:selected").data("dripfeed");
             _service_type = _that.children("option:selected").data("type");
-
+            
             $("#new_order .order-default-quantity input[name=quantity]").attr("disabled", false);
             $("#new_order .order-usernames-custom").addClass("d-none");
             $("#new_order .order-comments-custom-package").addClass("d-none");

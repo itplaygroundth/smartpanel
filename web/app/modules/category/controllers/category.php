@@ -101,6 +101,7 @@ class category extends MX_Controller {
 		}
 
 		//
+		$btndata['noButton']=$btndata['noButton']==null?"1":$btndata['noButton'];
 		$data = array(
 			"uid"             => session('uid'),
 			"name"            => $name,
@@ -108,7 +109,7 @@ class category extends MX_Controller {
 			"image"           => $image,
 			"status"          => $status,
 			"sort"            => $sort,
-			"data"			  => $btndata
+			"data"			  => json_encode($btndata)
 		);
 
 		$check_item = $this->model->get("id, ids", $this->tb_categories, "ids = '{$ids}'");
@@ -121,6 +122,7 @@ class category extends MX_Controller {
 			$this->db->insert($this->tb_categories, $data);
 		}else{
 			$data["changed"] = NOW;
+			print_r($data);
 			$this->db->update($this->tb_categories, $data, array("ids" => $check_item->ids));
 			if ($status != 1 ) {
 				$this->db->update($this->tb_services, ["status" => 0], ["cate_id" => $check_item->id]);
@@ -137,14 +139,7 @@ class category extends MX_Controller {
 		$this->model->delete($this->tb_categories, $ids, false);
 	}
 
-	public function getdata(){
-		$id= post('category_id');
-		$check_item = $this->model->get("data", $this->tb_categories, "id = '{$id}'");
-		echo_json_string(array(
-			'data' 		=> $check_item->data
-		));
-		//return $result;
-	}
+
 
 	public function ajax_actions_option(){
 		$type = post("type");

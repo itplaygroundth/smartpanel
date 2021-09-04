@@ -1,4 +1,4 @@
-<?php echo $_POST['url_path'] ?>
+ 
 <div class="modal fade" id="serviceModal" tabindex="-1" role="dialog" aria-labelledby="serviceModalTitle" aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -64,7 +64,8 @@
             $("#modal_view").prop('disabled', true)
             mediatype = ""
         }
-         var _action = "<?php echo cn(); ?>" + "category/getdata",
+        
+         var _action = "<?php echo cn('order/getdata') ?>",
              _token = '<?php echo strip_tags($this->security->get_csrf_hash()); ?>',
              _data = $.param({
                          token: _token,
@@ -102,7 +103,7 @@
         $("input[name='link']").prop('value',url);
         $("input[name='username']").prop('value','')
         $("#post-list").prop('html','')
-        $('#serviceModal').modal('hide');
+       // $('#serviceModal').modal('hide');
 
     }
     $("#btn_load").on('click', function() {
@@ -111,8 +112,8 @@
                     _token = '<?php echo strip_tags($this->security->get_csrf_hash()); ?>',
                     _data = $.param({
                         token: _token,
-                        url_path: $("input[name='url_path']").val(),
-                        user_name: $("input[name='username']").val()
+                        url_path: $("input[name='url_path']").val()==''?'':$("input[name='url_path']").val(),
+                        user_name: $("input[name='username']").val()==''?'':$("input[name='username']").val()
                     });
                 $.post(_action, _data, function(_result) {
                      var response =  JSON.parse(_result);
@@ -178,6 +179,10 @@
 }
 .post:hover .post-overlay{
 			display: flex;
+}
+
+.post:target .post-overlay{
+    display: flex;
 }
 
 .post-like,

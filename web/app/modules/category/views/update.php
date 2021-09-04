@@ -56,7 +56,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <div class="form-group">
                     <label><?=lang("Button")?></label>
-                    <select name="status" class="form-control square">
+                    <select name="noButton" class="form-control square">
                       <option value="1" <?=(!empty($data->noButton) && $data->noButton == 1) ? 'selected' : ''?>><?=lang("Active")?></option>
                       <option value="0" <?=(isset($data->noButton) && $data->noButton != 1) ? 'selected' : ''?>><?=lang("Deactive")?></option>
                     </select>

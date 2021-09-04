@@ -38,7 +38,7 @@
                   </div>
                   <div class="form-group" id="result_onChange">
                     <label><?=lang("order_service")?></label>
-                    <select name="service_id" class="form-control square ajaxChangeService" data-url="<?=cn($module."/order/get_service/")?>">
+                    <select name="service_id" class="chosen-select form-control square ajaxChangeService" data-url="<?=cn($module."/order/get_service/")?>">
                       <option> <?=lang("choose_a_service")?></option>
                       <?php
                         if (!empty($services)) {

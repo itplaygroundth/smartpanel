@@ -1,6 +1,7 @@
 {
     "require": {
         "takielias/codeigniter-websocket": "^1.0",
-        "pusher/pusher-php-server": "^7.0"
+        "pusher/pusher-php-server": "^7.0",
+        "harvesthq/chosen": "^1.8"
     }
 }
