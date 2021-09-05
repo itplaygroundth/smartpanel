@@ -171,6 +171,40 @@ class services_model extends MY_Model {
 		return $result;
 	}
 
+	public function get_all_services($total_rows = false, $status = "", $limit = "", $start = ""){
+		
+			$data  = array();
+			if (!get_role("admin")) {
+				$this->db->where("status", "1");
+			}
+			if ($limit != "" && $start >= 0) {
+				$this->db->limit($limit, $start);
+			}
+			$this->db->select("*");
+			$this->db->from($this->tb_services);
+			//$this->db->where("cate_id", $id);
+			if($status != "all" && !empty($status)){
+				$this->db->where("status", $status);
+			}
+			$this->db->order_by("price", "ASC");
+			//$query = $this->db->get();
+			// $services = $query->result();
+			// if(!empty($services)){
+			// 	return $services;
+			// }
+			$query = $this->db->get();
+			if ($total_rows) {
+				$result = $query->num_rows();
+				return $result;
+			}else{
+				$result = $query->result();
+				return $result;
+			}
+			return false;
+			
+		
+	}
+
 	public function get_active_categories(){
 		$data  = array();
 		// get categories

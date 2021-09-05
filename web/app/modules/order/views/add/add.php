@@ -26,7 +26,6 @@
                   <div class="form-group">
                     <label><?=lang("Category")?></label>
                     <select name="category_id" class="chosen-select form-control square ajaxChangeCategory" data-url="<?=cn($module."/get_services/")?>" tabindex="2">
-                    <!-- <select name="category_id" class="chosen-select" data-url="<?=cn($module."/get_services/")?>" tabindex="2"> -->
                       <option> <?=lang("choose_a_category")?></option>
                       <?php
                         if (!empty($categories)) {
@@ -45,7 +44,7 @@
                           
                   <div class="form-group" id="result_onChange">
                     <label><?=lang("order_service")?></label>
-                    <select name="service_id"  id="service_option" class="chosen-select form-control square ajaxChangeService" data-url="<?=cn($module."/get_service/")?>">
+                    <select name="service_id"  id="service_option" class="chosen-select form-control square ajaxChangeService" data-url="<?=cn($module."/get_service/")?>" >
                       <option> <?=lang("choose_a_service")?></option>
                       <?php
                         if (!empty($services)) {

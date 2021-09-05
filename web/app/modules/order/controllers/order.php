@@ -71,13 +71,24 @@ class order extends MX_Controller {
 	public function add(){
 		$this->load->model("services/services_model", 'services_model');
 		$categories = $this->services_model->get_active_categories();
-		
+		$services = $this->services_model->get_all_services(false);
 		$data = array(
 			"module"       => get_class($this),
 			'categories'   => $categories,
 			'services'     => "",
+			'massservice'   => $services,
+			'massorder'	    => []
 		);
 		$this->template->build('add/add', $data);
+	}
+
+	public function add_mass_order(){
+		$massorder = post('massorder');
+		$data = array(
+			"orders" => $massorder
+		);
+		echo_json_string($data);
+
 	}
 
 	// Get Services by cate ID
@@ -1064,8 +1075,15 @@ class order extends MX_Controller {
         curl_close($ch);
         
 		return $result;
+  }
 
-	
+  public function ajax_load_services($id=""){
+	echo "id is:".$id;
+	$check_service  = $this->model->get_services_lists(false,true,100,0);
+	//print_r($check_service);
+	echo_json_string(array(
+		'data' 		=> $check_service
+	));
   }
 
   
