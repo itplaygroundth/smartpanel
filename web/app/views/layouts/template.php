@@ -160,6 +160,4 @@ if ($theme_name == "") {
   <?= htmlspecialchars_decode(get_option('embed_javascript', ''), ENT_QUOTES) ?>
 
 </body>
-
-
 </html>

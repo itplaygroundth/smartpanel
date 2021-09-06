@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 class order extends MX_Controller {
 	public $tb_users;
 	public $tb_users_price;
@@ -90,7 +90,7 @@ class order extends MX_Controller {
 		echo_json_string($data);
 
 	}
-
+ 
 	// Get Services by cate ID
 	public function get_services($id = ""){
 		$check_category = $this->model->check_record("id", $this->tb_categories, $id, false, false);
@@ -129,7 +129,7 @@ class order extends MX_Controller {
 		$is_drip_feed       = (post("is_drip_feed") == "on") ? 1 : 0;
 		$agree 		        = (post("agree") == "on") ? 1 : 0;
 		$service_type 	    = post("service_type");
-		
+	
 		if ($cate_id == "") {
 			ms(array(
 				"status"  => "error",
@@ -614,7 +614,7 @@ class order extends MX_Controller {
 	public function ajax_mass_order(){
 		$mass_order 		= post("mass_order");
 		$agree 		        = (post("agree") == "on") ? 1 : 0;
-		
+	 
 		if (!$agree) {
 			ms(array(
 				"status"  => "error",
@@ -645,8 +645,14 @@ class order extends MX_Controller {
 		$orders = array();
 		if (is_array($mass_order)) {
 			foreach ($mass_order as $key => $row) {
-				$order = explode("|", $row);
-
+				if(!is_array($row)){
+					$order = explode("|", $row);
+				}else {
+					//$order = $row;
+					$order = $row;
+				}
+				
+				
 				// check format
 				$order_count = count($order);
 				if ($order_count > 3  || $order_count <= 2) {
@@ -671,12 +677,21 @@ class order extends MX_Controller {
 				$charge       = (double)$price*($quantity/1000);
 
 				if ($quantity <= 0 || $quantity < $min) {
+					if(!is_array($row)){
 					$error_details[$row] = lang("quantity_must_to_be_greater_than_or_equal_to_minimum_amount");
+					} else {
+						$error_details[implode("|",$row)] = lang("quantity_must_to_be_greater_than_or_equal_to_minimum_amount");
+					}
+				
 					continue;
 				}	
 						
 				if ($quantity > $max) {
+					if(!is_array($row)){
 					$error_details[$row] = lang("quantity_must_to_be_less_than_or_equal_to_maximum_amount");
+					} else {
+						$error_details[implode("|",$row)] = lang("quantity_must_to_be_greater_than_or_equal_to_minimum_amount");
+					}
 					continue;
 				}
 
@@ -728,6 +743,7 @@ class order extends MX_Controller {
 				"status"  => "success",
 				"message" => lang("place_order_successfully")
 			));
+			//redirect(cn('order/log'));
 		}
 
 	}
@@ -1078,12 +1094,19 @@ class order extends MX_Controller {
   }
 
   public function ajax_load_services($id=""){
-	echo "id is:".$id;
-	$check_service  = $this->model->get_services_lists(false,true,100,0);
+	$check_service    = $this->model->get_service_item($id);
+	$data = array(
+		"module"   		=> get_class($this),
+		"service" 		=> $check_service,
+		
+	);
+	//$this->load->view('add/get_service', $data);
+	//echo "id is:".$id;
+	//$check_service  = $this->model->get_services_lists(false,true,100,0);
 	//print_r($check_service);
-	echo_json_string(array(
-		'data' 		=> $check_service
-	));
+	echo_json_string($data);
+	//$this->template->build('add/tooltip', $data);
+	//return $data;
   }
 
   

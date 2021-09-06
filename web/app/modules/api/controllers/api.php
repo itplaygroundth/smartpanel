@@ -60,28 +60,33 @@ class api extends MX_Controller {
 		
 		 
 		$params = $_POST;
-		$options = array(
-            'cluster' => 'ap1',
-            'useTLS' => true
-        );
+		// $options = array(
+        //     'cluster' => 'ap1',
+        //     'useTLS' => true
+        // );
 		
-        //echo APPPATH .'vendor/autoload.php';
-         $this->pusher = new Pusher\Pusher(
-            //  $this->key,
-            //  $this->secret,
-            //  $this->id,
-			"eb32eebfd55f1a957dfa",
-			"291bf34d16dd605bd7e2",
-			"1260360",
-             $options
-         );
-
+        // //echo APPPATH .'vendor/autoload.php';
+        //  $this->pusher = new Pusher\Pusher(
+        //       $this->key,
+        //       $this->secret,
+        //       $this->id,
+		// 	// "eb32eebfd55f1a957dfa",
+		// 	// "291bf34d16dd605bd7e2",
+		// 	// "1260360",
+        //      $options
+        //  );
+	
 		$json = file_get_contents('php://input');
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
 		$charge = $json_ob->data;
 		$transaction_id = $charge->source->id;
 		$dbtr=$this->model->get_transaction_byid($transaction_id);
+		// $data = array(
+		// 	"key"   => $key,
+		// 	"data" => $charge
+		// );
+		// $this->pusher->trigger('my-channel', 'my-event', $data);
 		 if($key == 'charge.complete' ){
 					$data = array(
 						"status"            => $charge->status=='failed'?2:1,
@@ -108,7 +113,7 @@ class api extends MX_Controller {
 									  )
 								);
 							
-							$this->pusher->trigger('my-channel', 'my-event', $data);
+							//$this->pusher->trigger('my-channel', 'my-event', $data);
 							 
 						 }
 						 

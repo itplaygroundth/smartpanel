@@ -32,18 +32,9 @@
     </div>
   </div>
 </section>
-<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+
 <script>
   // Enable pusher logging - don't include this in production
-  Pusher.logToConsole = true;
 
-  var pusher = new Pusher('eb32eebfd55f1a957dfa', {
-    cluster: 'ap1'
-  });
-
-  var channel = pusher.subscribe('my-channel');
-  channel.bind('my-event', function(data) {
-    alert(JSON.stringify(data));
-  });
 </script>
 

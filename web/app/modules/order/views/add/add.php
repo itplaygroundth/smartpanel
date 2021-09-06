@@ -316,14 +316,16 @@
             </form>
           </div>
           <div id="mass_order" class="tab-pane fade">
-            <form class="form actionForm" action="<?=cn($module."/ajax_mass_order")?>" data-redirect="<?=cn($module."/log")?>" method="POST">
-            <?php require_once("mass_order.php")?>              <!-- <div class="x_content row">
-                <div class="col-md-6 col-sm-12 col-xs-12">
-                  <div class="content-header-title">
+            <form class="form myactionForm" action="<?=cn($module."/ajax_mass_order")?>" data-redirect="<?=cn($module)?>" method="POST">
+                       
+            <div class="x_content row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                  <!-- <div class="content-header-title">
                     <h6> <?=lang("one_order_per_line_in_format")?></h6>
-                  </div>
+                  </div> -->
                   <div class="form-group">
-                    <textarea id="editor" rows="14" name="mass_order" class="form-control square" placeholder="service_id|quantity|link"></textarea>
+                    <!-- <textarea id="editor" rows="14" name="mass_order" class="form-control square" placeholder="service_id|quantity|link"></textarea> -->
+                    <?php require_once("mass_order.php")?>   
                   </div>
                   <div class="form-group">
                     <label class="custom-control custom-checkbox">
@@ -332,7 +334,7 @@
                     </label>
                   </div>
                 </div>
-                <div class="col-md-6 col-sm-12 col-xs-12">
+                <!-- <div class="col-md-6 col-sm-12 col-xs-12">
                   <div class="mass_order_error" id="result_notification">
                     <div class="content-header-title">
                       <h6><i class="fa fa-info-circle"></i> <?=lang("note")?></h6>
@@ -341,8 +343,8 @@
                       <?=lang("here_you_can_place_your_orders_easy_please_make_sure_you_check_all_the_prices_and_delivery_times_before_you_place_a_order_after_a_order_submited_it_cannot_be_canceled")?>
                     </div>
                   </div>
-                </div>
-              </div> -->
+                </div> -->
+              </div>
               <div class="form-actions left">
                 <button type="submit" class="btn round btn-primary btn-min-width mr-1 mb-1">
                   <?=lang("place_order")?>

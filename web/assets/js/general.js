@@ -695,6 +695,7 @@ function General(){
             _data       = $.param({token:token});
             $.post( _action, _data,function(_result){
                 $("#result_onChangeService").html(_result);
+                //console.log(_result)
                 // display min-max on Mobile Reponsive
                 _service_price  = $("#order_resume input[name=service_price]").val();
                 _service_min    = $("#order_resume input[name=service_min]").val();
@@ -714,6 +715,7 @@ function General(){
             });
         }) 
 
+      
         // callback ajaxSearch
         $(document).on("submit", ".ajaxSearchItem" , function(){
             pageOverlay.show();
@@ -864,7 +866,41 @@ function General(){
             })
             return false;
         })
+        $(document).on("submit", ".myactionForm", function(){
+            pageOverlay.show();
+            event.preventDefault();
+            var _that       = $(this),
+                _action     = _that.attr("action"),
+                _redirect   = _that.data("redirect");
+            var _token  = _that .find("input[name=token]").val();
+                    _data   = _that.serialize();
+                if (typeof _token == "undefined") {
+                    _data       = _data + '&' + $.param({token:token});
+                }
+            
+            $.post(_action, _data, function(_result){
+                setTimeout(function(){
+                    pageOverlay.hide();
+                },1500)
 
+                if (is_json(_result)) {
+                    _result = JSON.parse(_result);
+                    setTimeout(function(){
+                        notify(_result.message, _result.status);
+                    },1500)
+                    setTimeout(function(){
+                        if(_result.status == 'success' && typeof _redirect != "undefined"){
+                            reloadPage(_redirect);
+                        }
+                    }, 2000)
+                }else{
+                    setTimeout(function(){
+                        $("#result_notification").html(_result);
+                    }, 1500)
+                }
+            })
+            return false;
+        })
         // callback actionForm
         $(document).on("submit", ".actionForm", function(){
             pageOverlay.show();
