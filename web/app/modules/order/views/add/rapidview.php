@@ -42,6 +42,35 @@
 </div>
 
 <script>
+      function addlink(url){
+
+        var category = ['tiktok', 'instagram', 'facebook', 'youtube', 'twitter'].filter((el, index, array) => {
+            $selecting = $("select[name='category_id'] option").filter(':selected')
+            if ($selecting.text().toLowerCase().includes(el)){
+                $selecting.toggleClass('post-overlay')
+                return el
+            }
+        })
+        switch(category){
+            case 'instagram':
+                url='https://www.'+category+'.com/p/'+url
+                break;
+            case 'tiktok':
+                break;
+                
+
+        }
+        // var $radios = $('input:radio[name=post-it]');
+        // console.log(url)
+        // var state = $radios.filter(()=>{ return this.value == url; }).prop('checked')
+        $(`input[id="attrib-${url}"]`).prop('checked',true)
+       // $("input[name='link']").prop('value',url);
+      //  $("input[name='username']").prop('value','')
+       // $("#post-list").prop('html','')
+        // $('#serviceModal').modal('hide');
+
+
+}
      $(function() {
     var url_path = "";
     var mediatype = "";
@@ -84,31 +113,10 @@
                     })
                 
     })
-    function addlink(url){
-
-        var category = ['tiktok', 'instagram', 'facebook', 'youtube', 'twitter'].filter((el, index, array) => {
-            if ($("select[name='category_id'] option").filter(':selected').text().toLowerCase().includes(el))
-                return el
-        })
-        switch(category){
-            case 'instagram':
-                url='https://www.'+category+'.com/p/'+url
-                break;
-            case 'tiktok':
-                break;
-                
-        
-        }
-        
-        $("input[name='link']").prop('value',url);
-        $("input[name='username']").prop('value','')
-        $("#post-list").prop('html','')
-       // $('#serviceModal').modal('hide');
-
-    }
+  
     $("#btn_load").on('click', function() {
                 event.preventDefault();
-                var _action = "<?php echo cn(); ?>" + "rapid/" + mediatype.toLocaleLowerCase() + '/getaccount',
+                var _action = "<?php echo cn(); ?>" + "rapid/" + mediatype.toLocaleLowerCase() + '/getmockup', //'/getaccount',
                     _token = '<?php echo strip_tags($this->security->get_csrf_hash()); ?>',
                     _data = $.param({
                         token: _token,
@@ -120,23 +128,19 @@
                      response.data.forEach((element) =>  {
                        
                         // $("#likes-posts-illustration").append(`<div class="tl post"><img  id="views-post-tl-canvas-`+element.id+`" src="`+element.thumbnail_src+`" size=150 /><option value="`+element.shortcode+`"></option></div>`)
-                         $("#post-list").append(`<a href="javascript:addlink('`+element.shortcode+`')" class="post" >
+                         $("#post-list").append(`<label class="attribsRadioButton four" for="attrib-${element.shortcode}"><input type="radio" name="post-it" value="${element.shortcode}" id="attrib-${element.shortcode}" ><a href="javascript:addlink('`+element.shortcode+`')" class="post" >
                             <figure class="post-image">
                             <img src="`+element.thumbnail_src+`" alt="">
                             </figure>
                             <span class="post-overlay">
-                            <p>
                                 <span class="post-likes"></span>
-                                <span class="post-comments"></span>
-                            </p>
                             </span>
-                        </a>`)
+                        </a></label>`)
   
                       })
                        
                     })
-                    //var _result= JSON.parse(_result)
-                    //console.log(_result)
+            
     });
    
        
@@ -165,7 +169,7 @@
   vertical-align: top;
 }
 .post-overlay {
-  background: rgba(0,0,0, .4);
+  background: rgba(0,0,0, .5);
   position: absolute;
   left: 0;
   right: 0;
@@ -177,13 +181,70 @@
   color: white;
   text-align: center;
 }
-.post:hover .post-overlay{
+.post:hover .post-overlay {
 			display: flex;
 }
 
-.post:target .post-overlay{
-    display: flex;
+ 
+/* input[type="radio"]:checked + span.post-overlay::after */
+/* .radio-check {
+   background: red;
+   display: flex;
+background:url(https://cdn1.iconfinder.com/data/icons/mimiGlyphs/16/check_mark.png) no-repeat center center;
+    position: absolute;
+    content:'';
+} */
+
+input[type=radio] { 
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
+/* IMAGE STYLES */
+input[type=radio] + a >figure>img {
+  cursor: pointer;
+}
+
+/* CHECKED STYLES */
+input[type=radio]:checked + a>figure + span {
+  /* background:url(https://cdn1.iconfinder.com/data/icons/mimiGlyphs/16/check_mark.png) no-repeat left top; 
+  display: flex; */
+  
+  background:url('<?=BASE?>assets/images/checkmark.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px 32px;
+
+  position: absolute;
+  top: 15%; left: 15%;
+  width: 32px; height: 32px;
+  transform: translate(-50%,-50%);
+  color: red;
+  font-size: 60px;
+  line-height: 80px;
+  text-align: center;
+  border: 2px solid white;
+  border-radius: 50%;
+  display: flex;
+  
+}
+/* input[type="radio"] + label
+{
+    background-image:url(http://www.clker.com/cliparts/c/q/l/t/l/B/radiobutton-unchecked-sm-md.png); 
+    height: 300px;
+    width: 300px; 
+    display:inline-block;
+    padding: 0 0 0 0px;
+    cursor:pointer;
+}
+
+input[type="radio"]:checked + label 
+{
+  background-image:url(http://www.clker.com/cliparts/M/2/V/6/F/u/radiobutton-checked-sm-md.png); 
+  
+ 
+} */
 
 .post-like,
 .post-comments {

@@ -60,6 +60,36 @@ class instagram extends MX_Controller {
         }
     }
 
+    public function getmockup(){
+        
+        $strings = file_get_contents("./assets/uploads/instagram.json");
+       // $user_name = post('user_name');
+        if($strings == false)
+        {
+            echo "Error";
+        }else {
+            $res_obj = json_decode($strings);
+            // $this->id = $res_obj['id'];
+            // $this->username = $res_obj['username'];
+            // $resposne=$this->getmedia($this->id);
+  
+            // $posts = array();
+            
+            // //var_dump($resposne['edges'][0]);
+            // foreach($resposne['edges'] as $node){
+            //  //print_r($node);
+            //   $posts[] = (object)[
+            //   'id' =>  $node['node']['id'],
+            //   'shortcode' => $node['node']['shortcode'],
+            //   'is_video'=> $node['node']['is_video'],
+            //   'thumbnail_src' => 'data:image/jpg;base64,'.base64_encode(file_get_contents($node['node']['thumbnail_src']))
+            //   ];
+            // }
+            //print_r($posts);
+             echo_json_string($res_obj);
+        }
+    }
+
     public function getaccount(){
 
         $this->url_path = getenv(post('url_path'));
