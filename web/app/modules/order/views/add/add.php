@@ -94,7 +94,9 @@
                   </div>
                   
                   <div class="form-group order-comments d-none">
-                    <label for=""><?=lang("Comments")?> <?php lang('1_per_line')?></label>
+                   <?php print_r($cate_info)?>
+                    <!-- <label for=""><?=lang("Comments")?> <?php lang('1_per_line')?></label> -->
+                    <label for=""><?=$cate_info!=null?lang($cate_info->description_text):lang("Comments XXX")?> <?php lang('1_per_line')?></label>
                     <textarea  rows="10" name="comments" class="form-control square ajax_custom_comments"></textarea>
                   </div> 
 

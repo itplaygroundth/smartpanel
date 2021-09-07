@@ -58,13 +58,11 @@ class order extends MX_Controller {
 
 	public function getdata(){
 		$id= post('category_id');
-		 
 		$check_item = $this->model->get("data", $this->tb_categories, "id = '{$id}'");
-		//print_r($check_item);
 		echo_json_string(array(
 			'data' 		=> $check_item->data
 		));
-		//return $result;
+		
 	}
 
 
@@ -93,7 +91,7 @@ class order extends MX_Controller {
  
 	// Get Services by cate ID
 	public function get_services($id = ""){
-		$check_category = $this->model->check_record("id", $this->tb_categories, $id, false, false);
+		$check_category = $this->model->check_record("*", $this->tb_categories, $id, false, false);
 		if ($check_category) {
 			$services    = $this->model->get_services_by_cate($id);
 			$this->load->model('users/users_model');
@@ -101,6 +99,7 @@ class order extends MX_Controller {
 				"module"   		=> get_class($this),
 				"services" 		=> $services,
 				"custom_rates"  => $this->users_model->get_custom_rates(),
+				"cate_info"	    => $check_category[0]->data?json_decode($check_category[0]->data):null
 			);
 			$this->load->view('add/get_services', $data);
 		}		
@@ -109,9 +108,12 @@ class order extends MX_Controller {
 	// Get Service Detail by ID
 	public function get_service($id = ""){
 		$check_service    = $this->model->get_service_item($id);
+		//$cate_info  = $this->model->get_categories_info($check_service->cate_id);
+		
 		$data = array(
 			"module"   		=> get_class($this),
 			"service" 		=> $check_service,
+		//	"cate_info"	    => $cate_info[0]->data?json_decode($cate_info[0]->data):null
 			
 		);
 		$this->load->view('add/get_service', $data);
@@ -318,6 +320,7 @@ class order extends MX_Controller {
 			"changed" 	    	=> NOW,
 			"created" 	    	=> NOW,
 		);
+		 
 		/*----------  get the different required paramenter for each service type  ----------*/
 		switch ($service_type) {
 
@@ -565,7 +568,10 @@ class order extends MX_Controller {
 	/*----------  insert data to order  ----------*/
 	private function save_order($table, $data_orders, $user_balance = "", $total_charge = ""){
 		$this->db->insert($table, $data_orders);
+		
+		
 		$order_id = $this->db->insert_id();
+		
 		if ($this->db->affected_rows() > 0) {
 
 			if ($data_orders["service_type"] != "subscriptions") {

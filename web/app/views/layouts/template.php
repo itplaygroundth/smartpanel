@@ -19,9 +19,9 @@
 
   <link rel="stylesheet" href="<?php echo BASE; ?>assets/plugins/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
-  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  
   <script src="<?php echo BASE; ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
-
+  
   <?php if (segment('1') == 'gallery' || segment('1') == 'setting') { ?>
     <link rel="stylesheet" href="<?php echo BASE; ?>assets/plugins/jquery-upload/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE; ?>assets/plugins/jquery-upload/css/jquery.fileupload.css">

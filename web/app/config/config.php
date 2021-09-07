@@ -486,9 +486,9 @@ if (stripos($_SERVER["REQUEST_URI"],'/add_funds/perfectmoney') !== FALSE ) {
 	$config['csrf_protection'] 	= FALSE;
 }
 
-// if (stripos($_SERVER["REQUEST_URI"],'/webhooks/charge') !== FALSE ) {
-// 	$config['csrf_protection'] 	= FALSE;
-// }
+if (stripos($_SERVER["REQUEST_URI"],'/add_funds/omise/update') !== FALSE ) {
+	$config['csrf_protection'] 	= FALSE;
+}
 
 if (stripos($_SERVER["REQUEST_URI"],'add_funds/paytm/complete') !== FALSE ) {
 	$config['csrf_protection'] 	= FALSE;

@@ -126,7 +126,7 @@
 </footer>
 <script type="text/javascript">
     var count = 20; // Timer
-    var redirect = "/statistics"; // Target URL
+    var redirect = "/add_funds"; // Target URL
 
     function countDown() {
         var timer = document.getElementById("timer"); // Timer ID
@@ -138,5 +138,6 @@
             window.location.href = redirect;
         }
     }
+ 
 </script>
 

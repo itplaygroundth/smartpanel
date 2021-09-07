@@ -138,9 +138,19 @@ class transactions extends MX_Controller {
 					"status"  => "success",
 					"message" => lang("Update_successfully")
 				));
+				
+			 
 			}
 			
-
+			$data = array(
+				"status"            => $status,
+				"uid"				=> $check_item->uid,
+				"transaction_id"    => $check_item->transaction_id,
+				"payment_type"		=> "offline",
+				"token"				=> $this->security->get_csrf_hash()
+			);
+			 
+			push_message($data);
 		}else{
 			ms(array(
 				"status"  => "error",

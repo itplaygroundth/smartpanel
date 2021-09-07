@@ -243,7 +243,10 @@
               $("#notification").modal('hide');
             }
         },500);
+   
+  
      });
+
     </script>
   </body>
 </html>

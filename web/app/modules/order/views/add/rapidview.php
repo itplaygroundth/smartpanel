@@ -35,15 +35,16 @@
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                <button type="button" class="btn btn-primary" id="savemodal">Save changes</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-      function addlink(url){
 
+    function save_modal(){
+        
         var category = ['tiktok', 'instagram', 'facebook', 'youtube', 'twitter'].filter((el, index, array) => {
             $selecting = $("select[name='category_id'] option").filter(':selected')
             if ($selecting.text().toLowerCase().includes(el)){
@@ -51,31 +52,33 @@
                 return el
             }
         })
-        switch(category){
+       
+        switch(category[0]){
             case 'instagram':
-                url='https://www.'+category+'.com/p/'+url
+                
+                if($("#btn_load").is(":hidden"))
+                url ='https://www.'+category+'.com/'+$(`input[name='username']`).val()
+                else
+                url ='https://www.'+category+'.com/p/'+$(`input[name='post-it']`).val()
+
+                $("input[name='link']").prop('value',url);
                 break;
             case 'tiktok':
                 break;
-                
-
         }
-        // var $radios = $('input:radio[name=post-it]');
-        // console.log(url)
-        // var state = $radios.filter(()=>{ return this.value == url; }).prop('checked')
+        $("#post-list").empty()
+        $('#serviceModal').modal('hide');
+    }
+     
+      function addlink(url){
         $(`input[id="attrib-${url}"]`).prop('checked',true)
-       // $("input[name='link']").prop('value',url);
-      //  $("input[name='username']").prop('value','')
-       // $("#post-list").prop('html','')
-        // $('#serviceModal').modal('hide');
-
-
-}
+        }
      $(function() {
     var url_path = "";
     var mediatype = "";
     $("select[name='category_id']").on('change', function() {
 
+        $("input[name='link']").prop('value','');
         var category = ['tiktok', 'instagram', 'facebook', 'youtube', 'twitter'].filter((el, index, array) => {
             if ($("select[name='category_id'] option").filter(':selected').text().toLowerCase().includes(
                     el))
@@ -105,18 +108,29 @@
                      var btn = JSON.parse(response.data);
                      if(btn!=null){
                      $("#modal_view").prop('value',btn.text_btn)
+                     if(btn.action_btn=="user")
+                        {
+                            $("#btn_load").hide();
+                        }else 
+                        {
+                            $("#btn_load").show();
+                        }
+
                      }
-                     //console.log(response.data.replace(/\\/g,""));
-                    //  response.data.forEach((element) =>  {
-                    //     console.log(element)
-                    //  })
+                   
                     })
+                   
                 
     })
   
+    $("#savemodal").on('click',function(){
+        save_modal()
+    })
+
     $("#btn_load").on('click', function() {
+        $("#post-list").empty()
                 event.preventDefault();
-                var _action = "<?php echo cn(); ?>" + "rapid/" + mediatype.toLocaleLowerCase() + '/getmockup', //'/getaccount',
+                var _action = "<?php echo cn(); ?>" + "rapid/" + mediatype.toLocaleLowerCase() + '/getaccount',
                     _token = '<?php echo strip_tags($this->security->get_csrf_hash()); ?>',
                     _data = $.param({
                         token: _token,

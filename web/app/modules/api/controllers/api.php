@@ -1,11 +1,12 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
- 
+defined('BASEPATH') or exit('No direct script access allowed');
+
 //require_once (APPPATH . "modules/controllers/pusher.php");
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
-class api extends MX_Controller {
+class api extends MX_Controller
+{
 	public $tb_users;
 	public $tb_categories;
 	public $tb_services;
@@ -14,15 +15,16 @@ class api extends MX_Controller {
 	public $uid;
 	public $tb_transaction_logs;
 	public $pusher;
-     public $cluster;
-     public $key;
-     public $secret;
-     public $id;
+	public $cluster;
+	public $key;
+	public $secret;
+	public $id;
 	//public $pushing;
 
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
-		$this->load->model(get_class($this).'_model', 'model');
+		$this->load->model(get_class($this) . '_model', 'model');
 		//$this->pushing = $this->load->module('pusher');
 		//Config Module
 		$this->tb_users      = USERS;
@@ -30,115 +32,71 @@ class api extends MX_Controller {
 		$this->tb_services   = SERVICES;
 		$this->tb_orders     = ORDER;
 		$this->tb_transaction_logs   = TRANSACTION_LOGS;
-		$this->cluster =  getenv('PUSHER_CLUSTER');
-        $this->key = getenv('PUSHER_KEY');
-        $this->secret = getenv('PUSHER_SECRET');
-        $this->id = getenv('PUSHER_ID');
-       
-		
 	}
 
-	public function index(){
+	public function index()
+	{
 		redirect(cn('api/docs'));
 	}
 
 
-	public function  rapidload(){
+	public function  rapidload()
+	{
 		$json = file_get_contents('php://input');
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
 		$data = $json_ob->data;
 		echo_json_string(array(
 			'key' => $key,
-			'data'=>$data
+			'data' => $data
 		));
 	}
 
- 
-	public function webhooks(){
+
+	public function webhooks()
+	{
 		$params = [];
-		
-		 
+
+
 		$params = $_POST;
-		// $options = array(
-        //     'cluster' => 'ap1',
-        //     'useTLS' => true
-        // );
-		
-        // //echo APPPATH .'vendor/autoload.php';
-        //  $this->pusher = new Pusher\Pusher(
-        //       $this->key,
-        //       $this->secret,
-        //       $this->id,
-		// 	// "eb32eebfd55f1a957dfa",
-		// 	// "291bf34d16dd605bd7e2",
-		// 	// "1260360",
-        //      $options
-        //  );
-	
+
+
 		$json = file_get_contents('php://input');
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
 		$charge = $json_ob->data;
 		$transaction_id = $charge->source->id;
-		$dbtr=$this->model->get_transaction_byid($transaction_id);
-		// $data = array(
-		// 	"key"   => $key,
-		// 	"data" => $charge
-		// );
-		// $this->pusher->trigger('my-channel', 'my-event', $data);
-		 if($key == 'charge.complete' ){
-					$data = array(
-						"status"            => $charge->status=='failed'?2:1,
-						"data"              => $charge->status=='failed'?$charge->failure_message:""
-					 );
-					 $check_item = $this->model->get("*", $this->tb_transaction_logs, ['transaction_id' => $transaction_id]);
-					  
-					 if(!empty($check_item)){
+		$dbtr = $this->model->get_transaction_byid($transaction_id);
+	 
+		if ($key == 'charge.complete') {
+			$data = array(
+				"status"            => $charge->status == 'failed' ? 2 : 1,
+				"transaction_id"    => $transaction_id,
+				"payment_type"		=> $charge->source->type,
+				"token"				=> $this->security->get_csrf_hash()
+			);
 			 
-						  
-						 $this->db->update($this->tb_transaction_logs, $data, ['uid' => $check_item->uid, 'transaction_id' => $check_item->transaction_id, 'type' => $check_item->type]);
-						 if ($data['status'] == 1 && $check_item->status == 0) {
-							 $user_balance = $this->model->get("balance", $this->tb_users, ['id' => $check_item->uid])->balance;
-							 $new_balance = $user_balance + ($check_item->amount - $check_item->txn_fee);
-							 $this->db->update($this->tb_users, ["balance" => $new_balance], ["id" => $check_item->uid]);
-						 }
-						 if ($this->db->affected_rows() > 0) {
-							 set_session('transaction_id',$check_item->transaction_id);
-							 $data['message'] =  echo_json_string(
-								array(
-									 	 "status"  => "success",
-										 "transaction_id"=>$check_item->transaction_id,
-									 	 "message" => lang("{$check_item->transaction_id} Update_successfully")
-									  )
-								);
-							
-							//$this->pusher->trigger('my-channel', 'my-event', $data);
-							 
-						 }
-						 
-			 
-					 }
-					
+			push_message($data);
+		 
 		}
-		
 	}
 
-	public function docs(){
+	public function docs()
+	{
 		$api_key = null;
 		$api_key = get_field(USERS, ['id' => session('uid')], "api_key");
-			
+
 		$status_order = array(
 			"key"            => lang("your_api_key"),
 			"action"         => "status",
 			"order"          => lang("order_id"),
-		);	
+		);
 
 		$status_orders = array(
 			"key"            => lang("your_api_key"),
 			"action"         => "status",
 			"orders"         => lang("order_ids_separated_by_comma_array_data"),
-		);	
+		);
 
 		$services = array(
 			"key"            => lang("your_api_key"),
@@ -153,7 +111,7 @@ class api extends MX_Controller {
 		$data = array(
 			"module"        => get_class($this),
 			"api_key"       => $api_key,
-			"api_url"       => BASE."api/v1",
+			"api_url"       => BASE . "api/v1",
 			"status_order"  => $status_order,
 			"status_orders" => $status_orders,
 			"services"      => $services,
@@ -164,11 +122,12 @@ class api extends MX_Controller {
 			$this->template->set_layout('general_page');
 			$this->template->build("index", $data);
 		}
-		
+
 		$this->template->build("index", $data);
 	}
 
-	public function v1(){
+	public function v1()
+	{
 		$params = [];
 		$this->api_key = (isset($_REQUEST["key"])) ? strip_tags(urldecode($_REQUEST["key"])) : '';
 		$action        = (isset($_REQUEST["action"])) ? strip_tags(urldecode($_REQUEST["action"])) : '';
@@ -196,7 +155,7 @@ class api extends MX_Controller {
 				$services = $this->model->get_services_list($this->uid);
 				if (!empty($services)) {
 					echo_json_string($services);
-				}else{
+				} else {
 					echo_json_string(array(
 						'status' => "success",
 						'data'   => "Empty Data",
@@ -209,19 +168,19 @@ class api extends MX_Controller {
 				break;
 
 			case 'status':
-					
-					if (isset($order_id) && $order_id != "") {
-						$this->single_status($order_id);
-					}	
-							
-					if (isset($order_ids) && $order_ids != "") {
-						$this->multi_status($order_ids);
-					}
-					break;
-			
+
+				if (isset($order_id) && $order_id != "") {
+					$this->single_status($order_id);
+				}
+
+				if (isset($order_ids) && $order_ids != "") {
+					$this->multi_status($order_ids);
+				}
+				break;
+
 			case 'balance':
-					$this->balance();
-					break;	
+				$this->balance();
+				break;
 
 			default:
 				echo_json_string(array(
@@ -231,7 +190,8 @@ class api extends MX_Controller {
 		}
 	}
 
-	private function add($params){
+	private function add($params)
+	{
 		$service_id = (isset($params["service"])) ? strip_tags(urldecode($params["service"])) : '';
 		$link       = (isset($params["link"])) ? strip_tags(urldecode($params["link"])) : '';
 
@@ -263,7 +223,7 @@ class api extends MX_Controller {
 				$quantity     = count($comments_arr);
 				$is_custom_comments = 1;
 				break;
-			
+
 			default:
 				$quantity     = (isset($params["quantity"])) ? strip_tags(urldecode($params["quantity"])) : '';
 				$interval     = (isset($params["interval"])) ? strip_tags(urldecode($params["interval"])) : '';
@@ -277,7 +237,7 @@ class api extends MX_Controller {
 							'error' => "This services does not support Dripfeed feature!",
 						));
 					}
-					
+
 					if ($runs != '' && $interval == '') {
 						echo_json_string(array(
 							'error' => lang("interval_time_is_required"),
@@ -304,9 +264,9 @@ class api extends MX_Controller {
 						));
 					}
 					$is_drip_feed      = 1;
-					$dripfeed_quantity = $params['quantity']; 
+					$dripfeed_quantity = $params['quantity'];
 					$quantity          = $runs * $dripfeed_quantity;
-				}else{
+				} else {
 					$quantity          = $quantity;
 				}
 				break;
@@ -323,20 +283,20 @@ class api extends MX_Controller {
 				'error' => lang("quantity_is_required"),
 			));
 		}
-		
+
 		$min   = $check_service->min;
 		$max   = $check_service->max;
 		$price = get_user_price($this->uid, $check_service);
-		
+
 		if ($quantity <= 0 || $quantity < $min) {
 			echo_json_string(array(
-				"error" => lang("quantity_must_to_be_greater_than_or_equal_to_minimum_amount").' '.$min
+				"error" => lang("quantity_must_to_be_greater_than_or_equal_to_minimum_amount") . ' ' . $min
 			));
-		}	
-				
+		}
+
 		if ($quantity > $max) {
 			echo_json_string(array(
-				"error" => lang("quantity_must_to_be_less_than_or_equal_to_maximum_amount").' '.$max
+				"error" => lang("quantity_must_to_be_less_than_or_equal_to_maximum_amount") . ' ' . $max
 			));
 		}
 
@@ -345,10 +305,10 @@ class api extends MX_Controller {
 		/*----------  Set custom rate for each user  ----------*/
 		if ($service_type == "package" || $service_type == "custom_comments_package") {
 			$total_charge = $price;
-		}else{
-			$total_charge = $price*($quantity/1000);
+		} else {
+			$total_charge = $price * ($quantity / 1000);
 		}
-		
+
 		if ((!empty($user->balance) && $user->balance < $total_charge) || empty($user->balance)) {
 			echo_json_string(array(
 				"error" => lang("not_enough_funds_on_balance")
@@ -405,14 +365,15 @@ class api extends MX_Controller {
 					"order"  => $insert_order_id,
 				));
 			}
-		}else{
+		} else {
 			echo_json_string(array(
 				"error" => lang("There_was_an_error_processing_your_request_Please_try_again_later")
 			));
 		}
 	}
 
-	private function balance(){
+	private function balance()
+	{
 		$get_balance = $this->model->check_record("balance", $this->tb_users, $this->uid, false, true);
 		if (!empty($get_balance)) {
 			echo_json_string(array(
@@ -420,14 +381,15 @@ class api extends MX_Controller {
 				"balance"  => $get_balance->balance,
 				"currency" => "USD"
 			));
-		}else{
+		} else {
 			echo_json_string(array(
 				"error"  => lang("the_account_does_not_exists"),
 			));
 		}
 	}
 
-	private function single_status($order_id){
+	private function single_status($order_id)
+	{
 		if ($order_id == "") {
 			echo_json_string(array(
 				'error' => lang("order_id_is_required_parameter_please_check_your_api_manual")
@@ -446,7 +408,7 @@ class api extends MX_Controller {
 			echo_json_string(array(
 				'error' => lang("incorrect_order_id"),
 			));
-		}else{
+		} else {
 
 			switch ($exists_order->service_type) {
 				case 'subscriptions':
@@ -454,7 +416,7 @@ class api extends MX_Controller {
 					$related_orders = $this->model->fetch("id, status", $this->tb_orders, ['main_order_id' => $exists_order->id]);
 					if (!empty($related_orders)) {
 						foreach ($related_orders as $key => $order) {
-							$orders[]= $order->id;
+							$orders[] = $order->id;
 						}
 					}
 					$result = array(
@@ -465,14 +427,14 @@ class api extends MX_Controller {
 					);
 					echo_json_string($result);
 					break;
-				
+
 				default:
 					if ($exists_order->is_drip_feed) {
 						$orders = [];
 						$related_orders = $this->model->fetch("id, status", $this->tb_orders, ['main_order_id' => $exists_order->id]);
 						if (!empty($related_orders)) {
 							foreach ($related_orders as $key => $order) {
-								$orders[]= $order->id;
+								$orders[] = $order->id;
 							}
 						}
 						$result = array(
@@ -480,8 +442,7 @@ class api extends MX_Controller {
 							'runs'        => $exists_order->runs,
 							'orders'      => $orders,
 						);
-						
-					}else{
+					} else {
 						$result = array(
 							'order'       => $exists_order->id,
 							'status'      => $this->order_title_status($exists_order->status),
@@ -494,12 +455,12 @@ class api extends MX_Controller {
 					echo_json_string($result);
 					break;
 			}
-
 		}
 	}
 
-	private function multi_status($order_ids){
-		
+	private function multi_status($order_ids)
+	{
+
 		if ($order_ids == "") {
 			echo_json_string(array(
 				'error' => lang("order_id_is_required_parameter_please_check_your_api_manual"),
@@ -515,14 +476,14 @@ class api extends MX_Controller {
 				$exists_order = $this->model->get('id, service_type ,status, charge, start_counter, remains, runs, is_drip_feed, sub_response_orders, sub_expiry, sub_posts', $this->tb_orders, ['id' => $order_id, 'uid' => $this->uid]);
 				if (empty($exists_order)) {
 					$data[$order_id] = "Incorrect order ID";
-				}else{
+				} else {
 					switch ($exists_order->service_type) {
 						case 'subscriptions':
 							$orders = [];
 							$related_orders = $this->model->fetch("id, status", $this->tb_orders, ['main_order_id' => $exists_order->id]);
 							if (!empty($related_orders)) {
 								foreach ($related_orders as $key => $order) {
-									$orders[]= $order->id;
+									$orders[] = $order->id;
 								}
 							}
 							$result = array(
@@ -532,14 +493,14 @@ class api extends MX_Controller {
 								'orders'      => $orders,
 							);
 							break;
-						
+
 						default:
 							if ($exists_order->is_drip_feed) {
 								$orders = [];
 								$related_orders = $this->model->fetch("id, status", $this->tb_orders, ['main_order_id' => $exists_order->id]);
 								if (!empty($related_orders)) {
 									foreach ($related_orders as $key => $order) {
-										$orders[]= $order->id;
+										$orders[] = $order->id;
 									}
 								}
 								$result = array(
@@ -547,8 +508,7 @@ class api extends MX_Controller {
 									'runs'        => $exists_order->runs,
 									'orders'      => $orders,
 								);
-								
-							}else{
+							} else {
 								$result = array(
 									'order'       => $exists_order->id,
 									'status'      => $this->order_title_status($exists_order->status),
@@ -571,13 +531,14 @@ class api extends MX_Controller {
 		));
 	}
 
-	private function order_title_status($status){
+	private function order_title_status($status)
+	{
 		switch ($status) {
 
 			case 'active':
 				$result = 'Active';
 				break;
-				
+
 			case 'completed':
 				$result = 'Completed';
 				break;
@@ -609,9 +570,8 @@ class api extends MX_Controller {
 			default:
 				$result = 'Pending';
 				break;
-
 		}
 
-	    return $result;
+		return $result;
 	}
 }

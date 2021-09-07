@@ -44,7 +44,11 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <div class="form-group">
                     <label for="eventRegInput1"><?=lang("Default_Action")?></label>
-                    <input type="text" class="form-control square" name="action_btn"  value="<?=(!empty($btn->action_btn))? $btn->action_btn: ''?>">
+                    <select name="action_btn" class="form-control square">
+                      <option value="user" <?=(!empty($btn->action_btn) && $btn->action_btn == 'user') ? 'selected' : ''?>><?=lang("User")?></option>
+                      <option value="post" <?=(isset($btn->action_btn) && $btn->action_btn == 'post') ? 'selected' : ''?>><?=lang("Post")?></option>
+                      <option value="link" <?=(isset($btn->action_btn) && $btn->action_btn == 'link') ? 'selected' : ''?>><?=lang("Link")?></option>
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
@@ -64,6 +68,11 @@
                 </div> 
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <div class="form-group">
+                  <label for="eventRegInput1"><?=lang("Description Show")?></label>
+                  <select name="description_text" class="form-control square">
+                      <option value="keyword" <?=(!empty($data->description_text) && $data->description_text == 'keyword') ? 'selected' : ''?>><?=lang("Keyword")?></option>
+                      <option value="description" <?=(isset($data->description_text) && $data->description_text != 'keyword') ? 'selected' : ''?>><?=lang("Description")?></option>
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-12 col-sm-12 col-xs-12">

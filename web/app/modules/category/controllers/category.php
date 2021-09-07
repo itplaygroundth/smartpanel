@@ -81,7 +81,7 @@ class category extends MX_Controller {
 		$image	    = post("image");
 		$sort 		= (int)post("sort");
 		$status 	= (int)post("status");
-		$btndata    = array("action_btn"=>post("action_btn"),"text_btn"=>post("text_btn"),"noButton"=>post("noButton"));
+		$btndata    = array("action_btn"=>post("action_btn"),"text_btn"=>post("text_btn"),"noButton"=>post("noButton"),"description_text"=>post("description_text"));
 		$desc 		= $this->input->post("desc");
 		$desc       = trim($desc);
 		$desc       = stripslashes($desc);

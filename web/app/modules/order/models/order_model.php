@@ -31,7 +31,21 @@ class order_model extends MY_Model {
 		}
 		return false;
 	}
+	function get_categories_info($cate_id=""){
+		$data  = array();
+		$this->db->select("*");
+		$this->db->from($this->tb_categories);
+		$this->db->where("status", "1");
+		$this->db->where("id",$cate_id);
+		$this->db->order_by("sort", 'ASC');
+		$query = $this->db->get();
 
+		$categories = $query->result();
+		if(!empty($categories)){
+			return $categories;
+		}
+		return false;
+	}
 	function get_services_list_by_cate($id = ""){
 		$data  = array();
 		if (!get_role("admin")) {

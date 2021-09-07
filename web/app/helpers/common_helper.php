@@ -1684,3 +1684,25 @@ if (!function_exists('uploadimage')){
         
     }
 }
+ 
+    
+if (!function_exists('push_message')){
+	function push_message($charge){
+    $options = array(
+            'cluster' => getenv('PUSHER_CLUSTER'),
+            'useTLS' => true
+        );
+		
+        //echo APPPATH .'vendor/autoload.php';
+         $pusher = new Pusher\Pusher(
+              getenv('PUSHER_KEY'),
+              getenv('PUSHER_SECRET'),
+              getenv('PUSHER_ID'),
+              $options
+         );
+
+         
+         $pusher->trigger('my-channel','my-event',$charge);
+		}
+	}
+ 
