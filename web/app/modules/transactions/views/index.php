@@ -4,6 +4,7 @@
     <?=lang("Transaction_logs")?>
   </h1>
 </div>
+<?php require_once("proof_transaction.php") ?>
 <div class="row" id="result_ajaxSearch">
   <?php if (!empty($transactions)) {
   ?>
@@ -64,9 +65,15 @@
                         echo lang($row->transaction_id)." ".lang("transaction_id_was_sent_to_your_email");
                       }
                       break;
-
+                   
+                   
+                      break;
                     default:
+                    if ($row->type == 'offline') {
+                      echo "<a href='#' data-id='".$row->transaction_id."' data-toggle='modal' class='open-slip' data-target='#staticBackdrop'>".$row->transaction_id."</a>";
+                    }else {
                       echo $row->transaction_id;
+                    }
                       break;
                   }
                 ?>
@@ -150,3 +157,4 @@
     echo Modules::run("blocks/empty_data");
   }?>
 </div>
+

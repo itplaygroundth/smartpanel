@@ -19,7 +19,7 @@ class transactions_model extends MY_Model {
 		$data  = array();
 		if (get_role("user")) {
 			$this->db->where("tl.uid", session('uid'));
-			$this->db->where("tl.status", 1);
+			//$this->db->where("tl.status", 1);
 		}
 		if ($limit != "" && $start >= 0) {
 			$this->db->limit($limit, $start);

@@ -52,7 +52,7 @@
     $("#amount_toggle input:radio").change(function() {
         var optionValue = $(this).val();
         $("#amount").val(optionValue);
-        //console.log(optionValue);
+       // console.log(optionValue);
     });
     </script>
     <style>

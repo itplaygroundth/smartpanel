@@ -86,6 +86,7 @@ class omise extends MX_Controller {
         
         //$qr="";
         $total = session('amount');
+        //$TXN_AMOUNT = $_POST["TXN_AMOUNT"];
 		$payment_method = post('payment_method');
         $user_name = get_field(USERS, ["id" => session('uid')], 'first_name');
         $user_email = get_field(USERS, ["id" => session('uid')], 'email');
@@ -108,6 +109,7 @@ class omise extends MX_Controller {
                 "type" 				=> $this->payment_type,
                 "transaction_id" 	=> $source['id'],
                 "amount" 	        => $total,
+                "txn_fee"           => $total-session('real_amount'),
                 "status"            => 0,
                 "created" 			=> NOW,
             );
@@ -183,9 +185,11 @@ class omise extends MX_Controller {
                                 "uid" 				=> session('uid'),
                                 "type" 				=> $this->payment_type,
                                 "transaction_id" 	=> $transaction_id,
+                                "txn_fee"           => $total-session('real_amount'),
                                 "amount" 	        => $total,
                                 "created" 			=> NOW,
                             );
+                            
             
                             $this->db->insert($this->tb_transaction_logs, $data);
                             $transaction_id = $this->db->insert_id();
@@ -210,8 +214,9 @@ class omise extends MX_Controller {
                         ));
                     }
         } else if($payment_method == "offline") {
-      
+            if(isset($_FILES['imagefile'])){
             $this->offline();
+            }
         } else if($payment_method == 'truewallet'){
  
             $data=array(
@@ -278,6 +283,7 @@ class omise extends MX_Controller {
                 "transaction_id" 	=> $transaction_id,
                 "amount" 	        => $charge['source']['amount']/100,
                 "status"            => 0,
+                "txn_fee"           => $total-session('real_amount'),
                 "created" 			=> $charge['source']['created_at']
              );
         $this->db->insert($this->tb_transaction_logs, $data);
@@ -325,14 +331,14 @@ class omise extends MX_Controller {
   
 
     public function offline(){
-        if(isset($_FILES['imagefile'])){
+      //  if(isset($_FILES['imagefile'])){
         //echo $_FILES['imagefile']['name'];
         
         $total = session('amount');
         //echo $image_new_name;
         $account_number=post("account_number");
         $user_id = post("user_id");
-        $upload_folder="smm/payments/offline/".$user_id."/".$account_number."/";
+        $upload_folder="/payments/offline/".$user_id."/".$account_number."/";
         if(check_image($_FILES['imagefile']['name'])){
         $image_new_name=$_FILES['imagefile']['name'];
         $image_file_extension = explode('.', $_FILES['imagefile']['name']);
@@ -354,12 +360,14 @@ class omise extends MX_Controller {
                 "transaction_id" 	=> $transaction_id,
                 "slip" 	            => $imgfile,
                 "amount" 	        => $total,
+                "txn_fee"           => $total-session('real_amount'),
                 "status"            => 0,
                 "created" 			=> NOW,
              );
 
              $this->db->insert($this->tb_transaction_logs, $data);
              $transaction_id = $this->db->insert_id();
+            // echo ($this->db->last_query());
 
          
             set_session("transaction_id", $transaction_id);
@@ -382,7 +390,16 @@ class omise extends MX_Controller {
           
         
           }
-        }
+        // } 
+        // else {
+        
+        //     ms(array(
+		// 		"status"  => "error",
+		// 		"message" => "Upload image file only!",
+		// 	));
+          
+        //
+        //  }
         
     }
 
@@ -401,6 +418,7 @@ class omise extends MX_Controller {
             "payment_method" => $payment_method,
             "currency_rate"  => $this->currency_rate,
             "omisetoken"     => session("omisetoken"),
+            
             //"qr"             => $source['scannable_code']['image']['download_uri'],
             "amount_group"   => $this->amount_group
             
