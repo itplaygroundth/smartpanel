@@ -48,7 +48,7 @@ class omise extends MX_Controller {
         if (!file_exists($path_file)) {
         	redirect(cn('add_funds'));
         }
-        $creditcards = $this->model->get_card_lists();
+        $creditcards = $this->model->get_card_lists(true);
         if($this->currency_code!="THB")
         $this->currency_rate=$this->currency_rate; 
         else $this->currency_rate=1;
@@ -135,11 +135,12 @@ class omise extends MX_Controller {
                             'omise_card_year' => explode("/",post('cardexpire'))[1],
                             'omise_card_cvv' => preg_replace("/\s+/", "", post('cardccv')),
                         ]);
-                         
+                      
+                         if($card_token){
                         $data = array(
                             "ids"             => session("ids"),
                             "uid"             => session("uid"),
-                            "omise_token_id"   => $card_token['id'],
+                            "omise_token_id"   => $card_token['card']['id'],
                                 "name"            => post('cardholder'),
                                 "creditcardno"    => preg_replace("/\s+/", "", post('cardnumber')),
                                 "year"            => explode("/",post('cardexpire'))[1],
@@ -148,6 +149,7 @@ class omise extends MX_Controller {
                             );
                         $this->model->update_creditcard($data);
                         $token_id = $card_token['id'];
+                         }
                      }
 
                 //if(!empty($token_id)){
@@ -433,21 +435,34 @@ class omise extends MX_Controller {
 
     public function change_card(){
         $uid = post('uid');
-        echo_json_string(array(
-            "status"   => "success",
-            "uid" => $uid
-        ));
+        
+        $creditcards=$this->model->get_card_lists(true);
+        $omise_customer_id=get_field(USERS, ["id" => session('uid')], 'omise_customer_id');
+        $customer = OmiseCustomer::retrieve($omise_customer_id);
+        $card = $customer->getCards()->retrieve($creditcards[0]->omise_token_id);
+        $card->destroy();
 
+         $this->db->update("creditcards",array(
+            "status"          => 0
+            ),array(
+            "id"             => $creditcards[0]->id
+         ));
+        
+
+            // $card->isDestroyed();
+            echo_json_string(array(
+                "status"   => "success",
+                "uid" => $uid,
+                "creditcards"=>$creditcards,
+               
+            ));
         ms(array(
             "status"  => "succuss",
             "message" => "Card changed!",
+            
         ));
       
-            // $customer = OmiseCustomer::retrieve('cust_test_4xsjvylia03ur542vn6');
-            // $card = $customer->getCards()->retrieve('card_test_4xsjw0t21xaxnuzi9gs');
-            // $card->destroy();
-
-            // $card->isDestroyed();
+            
     }
 
 

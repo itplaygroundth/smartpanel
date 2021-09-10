@@ -33,10 +33,13 @@ class omise_model extends MY_Model {
 	function update_creditcard($data){
 		
 		//print_r($data);
-		    $ids =  session('ids');
-			$check_item = $this->model->get("id, ids", $this->tb_creditcards, "ids = '{$ids}'");
+		    $uid= session('uid');
+			$ids = session('ids');
 			
+			$check_item = $this->model->get("id, ids", $this->tb_creditcards, ["id"=> $uid,"status"=>1]);
+			print_r($check_item);
 			if(empty($check_item)){
+				
 				$data["ids"]     = ids();
 				$data["changed"] = NOW;
 				$data["created"] = NOW;
