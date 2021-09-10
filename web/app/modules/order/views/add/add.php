@@ -3,13 +3,16 @@
   <div class="col-md-10 col-xl-10 ">
     <div class="card">
       <div class="card-header d-flex align-items-center">
-        <div class="tabs-list">
+        <div class="tabs-list" id="tabs-list">
           <ul class="nav nav-tabs">
             <li class="">
               <a class="active show" data-toggle="tab" href="#new_order"><i class="fa fa-clone"></i> <?=lang("single_order")?></a>
             </li>
-            <li>
+            <li id="nobulk" >
               <a data-toggle="tab" href="#mass_order"><i class="fa fa-sitemap"></i> <?=lang("mass_order")?></a>
+            </li>
+            <li id="bulk">
+              <a data-toggle="tab"  href="#mass_order_bulk"><i class="fa fa-sitemap"></i> <?=lang("mass_order_bulk")?></a>
             </li>
           </ul>
         </div>
@@ -50,6 +53,7 @@
                         if (!empty($services)) {
                           $service_item_default = $services[0];
                           foreach ($services as $key => $service) {
+                            
                       ?>
                       <option value="<?=$service->id?>" ><?=$service->name?></option>
                       <?php }}?>
@@ -92,11 +96,10 @@
                     <label><?=lang("Quantity")?></label>
                     <input class="form-control square ajaxQuantity" name="quantity" type="number">
                   </div>
-                  
+                 
                   <div class="form-group order-comments d-none">
-                   <?php print_r($cate_info)?>
+                  <label class="order-comment-label" for=""><?=lang("Comments")?> <?php lang('1_per_line')?></label>
                     <!-- <label for=""><?=lang("Comments")?> <?php lang('1_per_line')?></label> -->
-                    <label for=""><?=$cate_info!=null?lang($cate_info->description_text):lang("Comments XXX")?> <?php lang('1_per_line')?></label>
                     <textarea  rows="10" name="comments" class="form-control square ajax_custom_comments"></textarea>
                   </div> 
 
@@ -354,6 +357,43 @@
               </div>
             </form>
           </div>
+          <div id="mass_order_bulk" class="tab-pane fade">
+            <form class="form bulkactionForm" action="<?=cn($module."/ajax_mass_order")?>" data-redirect="<?=cn($module)?>" method="POST">
+                       
+            <div class="x_content row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                   <div class="content-header-title">
+                    <h6> <?=lang("one_order_per_line_in_format")?></h6>
+                  </div> 
+                  <div class="form-group">
+                    <textarea id="editor" rows="14" name="bulk_mass_order" class="form-control square" placeholder="service_id|quantity|link"></textarea> 
+                    
+                  </div>
+                  <div class="form-group">
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" name="agree">
+                      <span class="custom-control-label text-uppercase"><?=lang("yes_i_have_confirmed_the_order")?></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <div class="mass_order_error" id="result_notification">
+                    <div class="content-header-title">
+                      <h6><i class="fa fa-info-circle"></i> <?=lang("note")?></h6>
+                    </div>
+                    <div class="form-group">
+                      <?=lang("here_you_can_place_your_orders_easy_please_make_sure_you_check_all_the_prices_and_delivery_times_before_you_place_a_order_after_a_order_submited_it_cannot_be_canceled")?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions left">
+                <button type="submit" class="btn round btn-primary btn-min-width mr-1 mb-1">
+                  <?=lang("place_order")?>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -454,7 +494,67 @@
             }
         }
     });
+
+    $('#tabs-list .nav-tabs li').click(function () { 
+      var _tab = $(this)
+      
+      if(_tab.attr('id')=='nobulk'){
+        
+        var data = $("#editor").serializeArray()
+        var arrayOfLines = data[0].value.split("\n");
+      //  console.log('from bulk',arrayOfLines)
+        
+        $('#mainTable tbody').empty()
+        $("#massnumber").val(0)
+        $.each(arrayOfLines,(index,val)=>{
+          if(!val=='' || arrayOfLines.length==1)
+          addrow(index)
+          if(!val==''){
+            var colval =  val.split("|")
+          $(`#services_option_${index}`).val(colval[0])
+          $(`#services_option_${index}`).trigger("chosen:updated");
+          $(`#quantity_${index}`).val(colval[1])
+          title =  $(`#quantity_${index}`).attr("data-original-title")
+          $(`#quantity_${index}`).attr("title",title)
+          $(`#link_${index}`).val(colval[2])
+          }
+        })
+        
+
+
+      }else if(_tab.attr('id')=='bulk') {
+        var $form =$(".myactionForm")
+        var arrays = [];
+       
+        $('.myactionForm #mainTable>tbody').eq(0).find('tr').each((r,row) => arrays.push($(row).find('td :input').map((c,cell) => $(cell).val()).toArray()))
+        $("#editor").text(arraytostring(arrays,"|"))
+        
+      }
+
+    });
+
     $(".chosen-select").chosen({width: "95%"})
+
+    function arraytostring(array,delistr=''){
+      var result =""
+      var i =0
+      $.each(array,function(index,val){
+        i=0;
+         $.each(val,function(key,value){
+           i+=1;
+           if(!value==''){
+           if(i<val.length){
+              result+=value+delistr
+           }else {
+             result+=value
+           }
+           }
+         })
+         
+         result+="\n"
+      })
+      return result
+    }
    
   });
  

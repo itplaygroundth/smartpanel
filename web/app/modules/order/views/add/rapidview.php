@@ -104,8 +104,8 @@
                          category_id: $("select[name='category_id'] option").filter(':selected').val()
                      })
                     $.post(_action, _data, function(_result) {
-                     var response =  JSON.parse(_result);
-                     var btn = JSON.parse(response.data);
+                     var btn =  JSON.parse(_result);
+                     //var btn = JSON.parse(response.data);
                      if(btn!=null){
                      $("#modal_view").prop('value',btn.text_btn)
                      if(btn.action_btn=="user")

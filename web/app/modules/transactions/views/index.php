@@ -69,8 +69,8 @@
                    
                       break;
                     default:
-                    if ($row->type == 'offline') {
-                      echo "<a href='#' data-id='".$row->transaction_id."' data-toggle='modal' class='open-slip' data-target='#staticBackdrop'>".$row->transaction_id."</a>";
+                    if ($row->type == 'offline' && $row->status==0) {
+                      echo "<a href='#' data-id='".$row->transaction_id."' data-toggle='modal' class='open-slip' data-action='".cn()."transactions/slip'  data-target='#staticBackdrop'>".$row->transaction_id."</a>";
                     }else {
                       echo $row->transaction_id;
                     }
@@ -81,7 +81,7 @@
               <?php } ?>
               <td class="">
                 <?php
-                  if (in_array(strtolower($row->type), ["bonus", "manual", "other"])) {
+                  if (in_array(strtolower($row->type), ["bonus", "manual", "other","offline"])) {
                     echo ucfirst($row->type);
                   }else{
                 ?>
@@ -96,7 +96,7 @@
               
               <td>
                 <?php
-                  echo $row->txn_fee;
+                  echo $currency_symbol.$row->txn_fee;
                 ?>
               </td>
               <?php

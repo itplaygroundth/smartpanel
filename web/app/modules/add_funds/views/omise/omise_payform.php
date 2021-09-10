@@ -52,11 +52,6 @@
                         <?php if(count($creditcards)==0):?>
                         <span id="caret" class="caret">
                             <h1 class="page-title">
-                                <!-- <a id="toggle_add"><i class="fa fa-plus-square text-primary" aria-hidden="true"></i></a> -->
-                                <!-- <a id="toggle_add" class="ajaxModal"><span class="add-new" data-toggle="tooltip"
-                                        data-placement="bottom" title="<?=lang("add_new")?>"
-                                        data-original-title="Add new"><i class="fa fa-plus-square text-primary"
-                                            aria-hidden="true"></i></span></a> -->
                             </h1>
                         </span>
                         <?php endif?>
@@ -100,14 +95,17 @@
                     <div class="credit rounded   d-flex justify-content-between align-items-center ">
                         <div id="creditcard_list" class="mt-4 hidden rightButton">
                             <?php foreach ($creditcards as $key => $row): ?>
-                            <div class="pl-7 d-flex flex-row align-items-center"> <img
+                            <div class="pl-5 d-flex flex-row align-items-center"> <img
                                     src="https://i.imgur.com/qHX7vY1.png" class="rounded" width="70">
                                 <div class="d-flex flex-column ml-3">
                                     <span class="business">Credit Card</span>
                                     <span class="plan"><?=$row->creditcardno?>
                                     </span>
                                 </div>
-                                <input type="text" class="form-control cvv" name="selected_cvc" placeholder="CVC">
+                                <div class="d-flex flex-column ml-3">
+                                <button id="change_card" class="btn m-btn btn-info btn-small" ><?=lang("change")?> </button>
+                                </div>
+                                <!-- <input type="text" class="form-control cvv" name="selected_cvc" placeholder="CVC"> -->
                             </div>
 
                             <?php endforeach ?>
@@ -145,6 +143,18 @@
 $(document).ready(function() {
 
       
+$("#change_card").on('click',()=>{
+    event.preventDefault()
+    _action       = PATH + 'add_funds/omise/change_card';
+    _data = $.param({uid:<?=session('uid')?>,token:token});
+    $.post(_action,_data,(response)=>{
+        console.log(response)
+
+    })
+
+
+})
+
       $(document).on("submit", ".omisepayForm", function(){
         
         pageOverlay.show();
@@ -473,59 +483,6 @@ cardnumber_mask.on("accept", function () {
 
  }
 
-// //On Input Change Events
-// name.addEventListener('input', function () {
-//     if (name.value.length == 0) {
-//         document.getElementById('svgname').innerHTML = 'John Doe';
-//         document.getElementById('svgnameback').innerHTML = 'John Doe';
-//     } else {
-//         document.getElementById('svgname').innerHTML = this.value;
-//         document.getElementById('svgnameback').innerHTML = this.value;
-//     }
-// });
-
-// cardnumber_mask.on('accept', function () {
-//     if (cardnumber_mask.value.length == 0) {
-//         document.getElementById('svgnumber').innerHTML = '0123 4567 8910 1112';
-//     } else {
-//         document.getElementById('svgnumber').innerHTML = cardnumber_mask.value;
-//     }
-// });
-
-// expirationdate_mask.on('accept', function () {
-//     if (expirationdate_mask.value.length == 0) {
-//         document.getElementById('svgexpire').innerHTML = '01/23';
-//     } else {
-//         document.getElementById('svgexpire').innerHTML = expirationdate_mask.value;
-//     }
-// });
-
-// securitycode_mask.on('accept', function () {
-//     if (securitycode_mask.value.length == 0) {
-//         document.getElementById('svgsecurity').innerHTML = '985';
-//     } else {
-//         document.getElementById('svgsecurity').innerHTML = securitycode_mask.value;
-//     }
-// });
-
-//On Focus Events
-/*
-name.addEventListener('focus', function () {
-    document.querySelector('.creditcard').classList.remove('flipped');
-});
-
-cardnumber.addEventListener('focus', function () {
-    document.querySelector('.creditcard').classList.remove('flipped');
-});
-
-expirationdate.addEventListener('focus', function () {
-    document.querySelector('.creditcard').classList.remove('flipped');
-});
-
-securitycode.addEventListener('focus', function () {
-    document.querySelector('.creditcard').classList.add('flipped');
-});
- */
 })
 
 </script>
@@ -1065,6 +1022,15 @@ form .row .col-2 {
     margin-left: 1vh
 }
 
+.btn.m-btn {
+    width: 100%;
+    background-color: rgb(65, 202, 127);
+    border-color: rgb(65, 202, 127);
+    color: white;
+    justify-content: center;
+    padding: 0;
+    margin-top: 3vh
+}
 .btn {
     width: 100%;
     background-color: rgb(65, 202, 127);

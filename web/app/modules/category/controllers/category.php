@@ -122,7 +122,7 @@ class category extends MX_Controller {
 			$this->db->insert($this->tb_categories, $data);
 		}else{
 			$data["changed"] = NOW;
-			print_r($data);
+			//print_r($data);
 			$this->db->update($this->tb_categories, $data, array("ids" => $check_item->ids));
 			if ($status != 1 ) {
 				$this->db->update($this->tb_services, ["status" => 0], ["cate_id" => $check_item->id]);

@@ -17,7 +17,7 @@
   ?>
   <option value="<?=$service->id?>" data-type="<?=$service->type?>" data-dripfeed="<?=$service->dripfeed?>">
     <?php
-      $service = 'ID'. $service->id . ' - '. $service->name . ' - '.$price_per_1k;
+      $service = 'ID-'. $service->id . ' - '. $service->name . ' - '.$price_per_1k;
       echo $service;
     ?>
   </option>

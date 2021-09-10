@@ -540,7 +540,9 @@ if (stripos($_SERVER["REQUEST_URI"],'api/v1') !== FALSE ) {
 if (stripos($_SERVER["REQUEST_URI"],'api/webhooks') !== FALSE ) {
 	$config['csrf_protection'] 	= FALSE;
 }
-
+if (stripos($_SERVER["REQUEST_URI"],'transactions/slip') !== FALSE ) {
+	$config['csrf_protection'] 	= FALSE;
+}
 if (stripos($_SERVER["REQUEST_URI"],'mail') !== FALSE ) {
 	$config['csrf_protection'] 	= FALSE;
 }

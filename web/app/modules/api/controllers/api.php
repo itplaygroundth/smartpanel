@@ -65,10 +65,20 @@ class api extends MX_Controller
 		$json_ob = json_decode($json);
 		$key = $json_ob->key;
 		$charge = $json_ob->data;
-		$transaction_id = $charge->source->id;
-		$dbtr = $this->model->get_transaction_byid($transaction_id);
-	 
+		
+		if($key == 'refund.create'){
+
+		} else 
 		if ($key == 'charge.complete') {
+		if($charge->card==null){
+			$transaction_id = $charge->source->id;
+		}else 
+		{
+			$transaction_id = $charge->id;
+		}
+		//$dbtr = $this->model->get_transaction_byid($transaction_id);
+	 
+		
 			$data = array(
 				"status"            => $charge->status == 'failed' ? 2 : 1,
 				"transaction_id"    => $transaction_id,

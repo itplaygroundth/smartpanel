@@ -164,6 +164,46 @@ class transactions extends MX_Controller {
 		$this->model->delete($this->tb_transaction_logs, $ids, false);
 	}
 
+	public function ajax_update_slip(){
+		$transaction_id = post('id');
+		$data = array(
+			"status"=>"1"
+		);
+		$check_item = $this->model->get("*", $this->tb_transaction_logs, ['transaction_id' => $transaction_id]);
+		$this->db->update($this->tb_transaction_logs, $data, ['uid' => $check_item->uid, 'transaction_id' => $check_item->transaction_id, 'type' => $check_item->type]);
+		if ($this->db->affected_rows() > 0) {
+			ms(array(
+				"status"  => "success",
+				"message" => lang("Update_successfully")
+			));
+			echo_json_string(array(
+				"status"=>"success"
+			));
+		}else 
+		{
+			ms(array(
+				"status"  => "error",
+				"message" => lang("Update_not_successfully")
+			));
+			echo_json_string(array(
+				"status"=>"error"
+			));
+		}
+		 
+		}
+		
+
+	public function slip(){
+
+		$transaction_id = post('id');
+		$uid = session('uid');
+	 	//$image = $this->db->get('slip',$this->tb_transaction_logs,['transaction_id'=>$transaction_id]);
+		 $check_item = $this->model->get("*", $this->tb_transaction_logs, ['transaction_id' => $transaction_id]);
+		echo_json_string(array(
+			"slip" => $check_item->slip 
+		));
+	}
+
 	//Search
 	public function search(){
 		if (!get_role('admin')) {

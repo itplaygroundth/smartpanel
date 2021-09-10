@@ -6,47 +6,56 @@
 <table id="mainTable" class="table table-striped">
     <thead>
         <tr>
-            <th></th>
+          
             <th>Id | Name</th>
             <th>Quantity</th>
             <th>Link</th>
+            <th></th>
         </tr>
     </thead>
   
     <tbody >
     
-        <tr id="0">
-            <td style="min-width: 80;padding-left:5px;">
-                <span>
-                <a id="add_0" href="javascript:addrow(0)" class="mass_add"><i id="addbtn" class="addbtn fa fa-plus-square fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
-                <a id="copy_0" href="javascript:copyrow(0)" class="mass_copy">    <i id="copybtn" class="copybtn fa fa-clone fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
-                </span>
-            </td>
+        <!-- <tr id="0">
+            
             <td style="padding-left: 0;">
             <div class="form-group result-services" id="result_services">
                     <select name="mass_order[0][0]"  id="services_option_0" class="chosen-select massChangeService" data-url="<?=cn($module."/ajax_load_services/")?>">
-                      <option> <?=lang("choose_a_service")?></option>
-                      <?php
-                        if (!empty($massservice)) {
-                          $service_item_default = $massservice[0];
-                          foreach ($massservice as $key => $service) {
-                      ?>
-                      <option value="<?=$service->id?>" ><?=$service->name?></option>
-                      <?php }}?>
-                    </select>
+                    <option> <?=lang("choose_a_service")?></option>
+                   <?php
+                    if (!empty($massservice)) {
+                    $service_item_default = $massservice[0];
+                    //$service_item_default = $services[0];
+                    $currency_symbol      = get_option('currency_symbol', "$");
+                    $decimal_places       = get_option('currency_decimal', 2);
+                    
+                    foreach ($massservice as $key => $service) {
+                        $service_price = $service->price;
+                        if (get_role('user') && isset($custom_rates[$service->id]) ) {
+                        $service_price = $custom_rates[$service->id]['service_price'];
+                        }
+                        $price_per_1k = $currency_symbol.currency_format($service_price, $decimal_places);
+                ?>
+                <option value="<?=$service->id?>" data-type="<?=$service->type?>" data-dripfeed="<?=$service->dripfeed?>">
+                    <?php
+                    $service = 'ID-'. $service->id . ' - '. $service->name . ' - '.$price_per_1k;
+                    echo $service;
+                    ?>
+                </option>
+                <?php }}?> 
+                </select>
                   </div>
             </td>
             <td style="padding-left: 0;"><input class="form-control mass-quantity" name="mass_order[0][1]"  id="quantity_0" data-toggle="tooltip" data-placement="top" title="Min:<?=$servicex->min?>,Max:<?=$servicex->max?>"/></td>
-            <td><input class="form-control mass-service-link" name="mass_order[0][2]" /></td>
-            <td>
-            <div class="item-action dropdown">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="icon"><i class="fa fa-bars fa-2x text-primary" aria-hidden="true"></i></a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a href="javascript:delrow(0)" class="dropdown-item"><i class="dropdown-icon fe fe-trash"></i> <?=lang('Delete')?> </a>
-                  </div>
-                </div>
+            <td><input class="form-control mass-service-link" id="link_0" name="mass_order[0][2]" /></td>
+            <td style="min-width: 80;padding-left:5px;">
+                <span>
+                <a id="add_0" href="javascript:addrow(0)" class="mass_add"><i id="addbtn" class="addbtn fa fa-external-link-square fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
+                <a id="copy_0" href="javascript:copyrow(0)" class="mass_copy">    <i id="copybtn" class="copybtn fa fa-clone fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
+                <a href="javascript:delrow(0)" class="mass_del"><i class="delbtn fa fa-trash-o fa-2x"></i> </a>   
+            </span>
             </td>
-        </tr>
+        </tr> -->
        
     </tbody>
   
@@ -59,56 +68,65 @@
 var t = 0;
 
 
-function addrow(val){
+function addrow(id){
  
-    var id = parseInt($("#massnumber").val())+1
+   // var id = parseInt($("#massnumber").val())+1
     
-    var tr=`<tr id="`+id+`" class="mass_tr">
-            <td style="min-width: 80;padding-left:5px;">
-                <span>
-                <a id="add_${id}" href="javascript:addrow(${id})" class="mass_add"><i id="addbtn" class="addbtn fa fa-plus-square fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
-                <a id="copy_${id}" href="javascript:copyrow(${id})" class="mass_copy">    <i id="copybtn" class="copybtn fa fa-clone fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
-                </span>
-            </td>
-    `
+    var tr=`<tr id="`+id+`" class="mass_tr">`
+           
     tr += `
     <td style="padding-left: 0;">
             <div class="form-group result-services" id="result_services_`+id+`}">
                     <select name="mass_order[`+id+`][0]"  id="services_option_`+id+`" class="chosen-select massChangeService" data-url="<?=cn($module."/ajax_load_services/")?>">
-                      <option> <?=lang("choose_a_service")?></option>
-                      <?php
-                        if (!empty($massservice)) {
-                          $service_item_default = $massservice[0];
-                          foreach ($massservice as $key => $service) {
-                      ?>
-                      <option value="<?=$service->id?>" ><?=$service->name?></option>
-                      <?php }}?>
-                    </select>
+                    <option> <?=lang("choose_a_service")?></option>
+                   <?php
+                    if (!empty($massservice)) {
+                    $service_item_default = $massservice[0];
+                    //$service_item_default = $services[0];
+                    $currency_symbol      = get_option('currency_symbol', "$");
+                    $decimal_places       = get_option('currency_decimal', 2);
+                    
+                    foreach ($massservice as $key => $service) {
+                        $service_price = $service->price;
+                        if (get_role('user') && isset($custom_rates[$service->id]) ) {
+                        $service_price = $custom_rates[$service->id]['service_price'];
+                        }
+                        $price_per_1k = $currency_symbol.currency_format($service_price, $decimal_places);
+                ?>
+                <option value="<?=$service->id?>" data-type="<?=$service->type?>" data-dripfeed="<?=$service->dripfeed?>">
+                    <?php
+                    $service = 'ID-'. $service->id . ' - '. $service->name . ' - '.$price_per_1k;
+                    echo $service;
+                    ?>
+                </option>
+                <?php }}?> 
+                </select>
                   </div>
             </td>
     `
     tr += `<td style="padding-left: 0;"><input class="form-control mass-quantity" name="mass_order[`+id+`][1]" id="quantity_${id}" data-toggle="tooltip" data-placement="top" title="Min:,Max:"/></td>
-            <td><input class="form-control mass-service-link" name="mass_order[`+id+`][2]" /></td>
-    <td>
-    <div class="item-action dropdown">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="icon"><i class="fa fa-bars fa-2x text-primary" aria-hidden="true"></i></a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a href="javascript:delrow(`+id+`)" class="dropdown-item"><i class="dropdown-icon fe fe-trash"></i> <?=lang('Delete')?> </a>
-                  </div>
-                </div>
-            </td>
+            <td><input class="form-control mass-service-link" id="link_`+id+`" name="mass_order[`+id+`][2]" /></td>
+            <td style="min-width: 80;padding-left:5px;">
+                <span>
+                <a id="add_0" href="javascript:addrow(${id})" class="mass_add"><i id="addbtn" class="addbtn fa fa-external-link-square fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
+                <a id="copy_0" href="javascript:copyrow(${id})" class="mass_copy">    <i id="copybtn" class="copybtn fa fa-clone fa-2x text-primary" aria-hidden="true" style="cursor: pointer;"></i></a>
+                <a href="javascript:delrow(${id})" class="mass_del"><i class="delbtn fa fa-trash-o fa-2x"></i> </a>   
+            </span>
     </tr>`
     $("#massnumber").prop('value',id)
+    
+    if($('#mainTable tbody tr').length>1){
     $('#mainTable tbody tr:last').after(tr);
+    }else {
+    $('#mainTable tbody').append(tr);
+    }
     $(".chosen-select").chosen({width: "95%"})
 }
  
 function copyrow(val){
-   
-    
-  
     var clone_id = parseInt(val)
-    addrow(val);
+    //console.log(clone_id)
+    addrow(val+1);
     var val_select = $("#services_option_"+clone_id).find(":selected").val()
     var id = parseInt($("#massnumber").val())
     
@@ -121,8 +139,8 @@ function copyrow(val){
  
 }
 function delrow(id){
-    //console.log(id)
-    if(id>0){
+   
+    if(id>1){
     $(`#mainTable tbody tr#${id}`).remove();
     }
 }

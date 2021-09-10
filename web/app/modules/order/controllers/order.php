@@ -59,8 +59,13 @@ class order extends MX_Controller {
 	public function getdata(){
 		$id= post('category_id');
 		$check_item = $this->model->get("data", $this->tb_categories, "id = '{$id}'");
+		//{\"action_btn\":\"post\",\"text_btn\":\"Load Post\",\"noButton\":\"1\",\"description_text\":\"description\"}
+		$data= json_decode($check_item->data);
 		echo_json_string(array(
-			'data' 		=> $check_item->data
+			'action_button' 		=> $data->action_btn,
+			'text_btn'				=> $data->text_btn,
+			'noButton'				=> $data->noButton,
+			'description_text'		=> lang($data->description_text)
 		));
 		
 	}
@@ -95,11 +100,12 @@ class order extends MX_Controller {
 		if ($check_category) {
 			$services    = $this->model->get_services_by_cate($id);
 			$this->load->model('users/users_model');
+			 
 			$data = array(
 				"module"   		=> get_class($this),
 				"services" 		=> $services,
 				"custom_rates"  => $this->users_model->get_custom_rates(),
-				"cate_info"	    => $check_category[0]->data?json_decode($check_category[0]->data):null
+			 
 			);
 			$this->load->view('add/get_services', $data);
 		}		
@@ -108,12 +114,12 @@ class order extends MX_Controller {
 	// Get Service Detail by ID
 	public function get_service($id = ""){
 		$check_service    = $this->model->get_service_item($id);
-		//$cate_info  = $this->model->get_categories_info($check_service->cate_id);
+		$cate_info  = $this->model->get_categories_info($check_service->cate_id);
 		
 		$data = array(
 			"module"   		=> get_class($this),
 			"service" 		=> $check_service,
-		//	"cate_info"	    => $cate_info[0]->data?json_decode($cate_info[0]->data):null
+			"cate_info"	    => $cate_info[0]->data?json_decode($cate_info[0]->data):null
 			
 		);
 		$this->load->view('add/get_service', $data);
@@ -1106,13 +1112,9 @@ class order extends MX_Controller {
 		"service" 		=> $check_service,
 		
 	);
-	//$this->load->view('add/get_service', $data);
-	//echo "id is:".$id;
-	//$check_service  = $this->model->get_services_lists(false,true,100,0);
-	//print_r($check_service);
+ 
 	echo_json_string($data);
-	//$this->template->build('add/tooltip', $data);
-	//return $data;
+ 
   }
 
   

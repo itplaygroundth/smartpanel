@@ -146,6 +146,7 @@ function General(){
             event.preventDefault();
             _that   = $(this);
             _type    = _that.val();
+            
             switch(_type) {
               case "default":
                 $("#add_edit_service .dripfeed-form").removeClass("d-none");
@@ -482,10 +483,20 @@ function General(){
             _action     = _that.data("url") + _id;
             _data       = $.param({token:token});
             $.post( _action, _data,function(_result){
+                //console.log(_result)
                 setTimeout(function () {
                     $("#result_onChange").html(_result);
                 }, 100);
             });
+            _data       = $.param({category_id:_id,token:token});
+            $.post('getdata',_data,(response)=>{
+                
+                var _result=JSON.parse(response)
+                $(".order-comment-label").text(_result.description_text)
+            })
+            
+           // $(".order-comment-label").text(htmlString)
+           // $(".order-comment-label").text(htmlString)
         })  
 
         $(document).on("change", ".ajaxChangeService" , function(){
@@ -495,6 +506,8 @@ function General(){
             _dripfeed     = _that.children("option:selected").data("dripfeed");
             _service_type = _that.children("option:selected").data("type");
             
+           
+
             $("#new_order .order-default-quantity input[name=quantity]").attr("disabled", false);
             $("#new_order .order-usernames-custom").addClass("d-none");
             $("#new_order .order-comments-custom-package").addClass("d-none");
@@ -509,6 +522,7 @@ function General(){
             _currency_symbol = $("#new_order input[name=currency_symbol]").val();
             $("#new_order input[name=total_charge]").val(_total_charge);
             $("#new_order .total_charge span").html(_currency_symbol + _total_charge);
+            
             switch(_service_type) {
               case "subscriptions":
                 $("#new_order input[name=sub_expiry]").val('');
@@ -531,7 +545,7 @@ function General(){
                 $("#new_order .order-default-link").removeClass("d-none");
                 $("#new_order .order-comments").removeClass("d-none");
                 $("#new_order #result_total_charge").removeClass("d-none");
-
+               
                 $("#new_order .order-usernames").addClass("d-none");
                 $("#new_order .order-hashtags").addClass("d-none");
                 $("#new_order .order-username").addClass("d-none");
@@ -548,6 +562,7 @@ function General(){
                 $("#new_order .order-default-link").removeClass("d-none");
                 $("#new_order .order-comments-custom-package").removeClass("d-none");
                 $("#new_order #result_total_charge").removeClass("d-none");
+                
 
                 $("#new_order .order-comments").addClass("d-none");
                 $("#new_order .order-default-quantity").addClass("d-none");
@@ -695,7 +710,7 @@ function General(){
             _data       = $.param({token:token});
             $.post( _action, _data,function(_result){
                 $("#result_onChangeService").html(_result);
-                //console.log(_result)
+               // console.log(_result)
                 // display min-max on Mobile Reponsive
                 _service_price  = $("#order_resume input[name=service_price]").val();
                 _service_min    = $("#order_resume input[name=service_min]").val();
@@ -703,6 +718,7 @@ function General(){
                 $("#new_order input[name=service_price]").val(_service_price);
                 $("#new_order input[name=service_min]").val(_service_min);
                 $("#new_order input[name=service_max]").val(_service_max);
+                
 
                 setTimeout(function () {
                     if (_service_type == "package" || _service_type == "custom_comments_package" ) {
@@ -710,6 +726,7 @@ function General(){
                         _currency_symbol = $("#new_order input[name=currency_symbol]").val();
                         $("#new_order input[name=total_charge]").val(_total_charge);
                         $("#new_order .total_charge span").html(_currency_symbol + _total_charge);
+                        
                     }
                 }, 100);
             });

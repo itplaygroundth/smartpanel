@@ -82,7 +82,7 @@ class omise extends MX_Controller {
         $source = NULL;
         $user_id =session('uid');
         $transaction_id = "";
-        
+        $token_id ="";
         
         //$qr="";
         $total = session('amount');
@@ -121,10 +121,11 @@ class omise extends MX_Controller {
             
             if(count($this->model->get_card_lists())>0){
                 $creditcards=$this->model->get_card_lists();
+              // print_r($creditcards);
                
-               
-                $token_id = $creditcards[0]->omise_token_id;//$card_token['id'];
-                 } else {
+                $token_id = $creditcards[0]->omise_token_id;
+                //$card_token['id'];
+                 } if(empty($token_id)) {
                 
 
                         $card_token = $this->model->card_token([
@@ -148,8 +149,8 @@ class omise extends MX_Controller {
                         $this->model->update_creditcard($data);
                         $token_id = $card_token['id'];
                      }
-        
-                if(!empty($token_id)){
+
+                //if(!empty($token_id)){
 
                     
 
@@ -207,12 +208,12 @@ class omise extends MX_Controller {
                                 "message" => $charge['failure_code']
                             ));
                         }
-                    } else {
-                        ms(array(
-                            "status"  => "error",
-                            "message" => $charge['failure_code']
-                        ));
-                    }
+                    // } else {
+                    //     ms(array(
+                    //         "status"  => "error",
+                    //         "message" => "credit card not avaiable"
+                    //     ));
+                    // }
         } else if($payment_method == "offline") {
             if(isset($_FILES['imagefile'])){
             $this->offline();
@@ -338,7 +339,7 @@ class omise extends MX_Controller {
         //echo $image_new_name;
         $account_number=post("account_number");
         $user_id = post("user_id");
-        $upload_folder="/payments/offline/".$user_id."/".$account_number."/";
+        $upload_folder="payments/offline/".$user_id."/".$account_number."/";
         if(check_image($_FILES['imagefile']['name'])){
         $image_new_name=$_FILES['imagefile']['name'];
         $image_file_extension = explode('.', $_FILES['imagefile']['name']);
@@ -390,16 +391,7 @@ class omise extends MX_Controller {
           
         
           }
-        // } 
-        // else {
-        
-        //     ms(array(
-		// 		"status"  => "error",
-		// 		"message" => "Upload image file only!",
-		// 	));
-          
-        //
-        //  }
+ 
         
     }
 
@@ -425,6 +417,7 @@ class omise extends MX_Controller {
 		);
         $this->template->build('omise/truewallet', $data);
     }
+    
     public function creditcard(){
         $data= NULL;
         $charge = OmiseCharge::create(array(
@@ -434,8 +427,30 @@ class omise extends MX_Controller {
             
         )); 
         $source =$charge['source'];
+        //print_r($source);
         $this->load->view("omise/redirect", $data);
     }
+
+    public function change_card(){
+        $uid = post('uid');
+        echo_json_string(array(
+            "status"   => "success",
+            "uid" => $uid
+        ));
+
+        ms(array(
+            "status"  => "succuss",
+            "message" => "Card changed!",
+        ));
+      
+            // $customer = OmiseCustomer::retrieve('cust_test_4xsjvylia03ur542vn6');
+            // $card = $customer->getCards()->retrieve('card_test_4xsjw0t21xaxnuzi9gs');
+            // $card->destroy();
+
+            // $card->isDestroyed();
+    }
+
+
     public function qrcode(){
         $data = NULL;
         $charge = OmiseCharge::create(array(
