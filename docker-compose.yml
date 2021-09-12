@@ -72,5 +72,16 @@ services:
     environment:
       - PMA_HOST=smm_mysql
       # - PMA_ABSOLUTE_URI=http://phpmyadmin.domain.com/
+    
+  rapid_api:
+    container_name: rapid_api
+    build:
+      context: ./go/src
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+     - "9191:9090"
+    volumes:
+      - ./go/src/:/app
  
   

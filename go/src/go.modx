@@ -1,0 +1,19 @@
+module canyon
+
+go 1.15
+
+require (
+	github.com/Jeffail/gabs/v2 v2.6.0
+	github.com/amalfra/etag v0.0.0-20201123174553-83e6a87e7d0d
+	github.com/go-redis/redis/v8 v8.4.0
+	github.com/go-resty/resty/v2 v2.3.0
+	github.com/gofiber/fiber v1.14.6
+	github.com/gofiber/fiber/v2 v2.7.1
+	github.com/joho/godotenv v1.3.0
+	github.com/klauspost/compress v1.11.0 // indirect
+	github.com/mercadolibre/golang-restclient v0.0.0-20170701022150-51958130a0a0
+	github.com/spf13/viper v1.7.1
+	github.com/streadway/amqp v1.0.0
+	github.com/tdewolff/minify/v2 v2.9.10
+	github.com/valyala/fasthttp v1.18.0
+)

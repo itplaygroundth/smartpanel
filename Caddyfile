@@ -2,7 +2,7 @@
   reverse_proxy smm_app:80
   tls internal
 }
-{$URL_KBANK} {
-  reverse_proxy kbank:80
+{$RAPID_URL} {
+  reverse_proxy rapid_api:9090
   tls internal
 }
