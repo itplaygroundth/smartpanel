@@ -98,8 +98,8 @@
                             <div class="pl-5 d-flex flex-row align-items-center"> <img
                                     src="https://i.imgur.com/qHX7vY1.png" class="rounded" width="70">
                                 <div class="d-flex flex-column ml-3">
-                                    <span class="business">Credit Card</span>
-                                    <span class="plan"><?=$row->creditcardno?>
+                                    <span class="business"><?=$row->name?></span>
+                                    <span class="plan"><?="************".substr($row->creditcardno,12,4)?>
                                     </span>
                                 </div>
                                 <div class="d-flex flex-column ml-3">
@@ -145,11 +145,12 @@ $(document).ready(function() {
       
 $("#change_card").on('click',()=>{
     event.preventDefault()
-    _action       = PATH + 'add_funds/omise/change_card';
+    var _action       = PATH + 'add_funds/omise/change_card',
+    _redirect     = PATH + 'add_funds/omise',
     _data = $.param({uid:<?=session('uid')?>,token:token});
     $.post(_action,_data,(response)=>{
-        console.log(response)
-
+       reloadPage(_redirect);
+      
     })
 
 
