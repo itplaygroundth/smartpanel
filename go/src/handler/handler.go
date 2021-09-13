@@ -610,6 +610,10 @@ func GetUser(c *fiber.Ctx) error {
 		return get_twitter(account, c)
 	}
 
+	if key == "youtube" {
+		return get_youtube(account, c)
+	}
+
 	return c.SendString("404 Not Found")
 }
 
@@ -657,18 +661,68 @@ func get_instagram(account string, c *fiber.Ctx) error {
 	return _res
 }
 
-func get_facebook(account string, arg string, c *fiber.Ctx) error {
+func get_youtube(account string, c *fiber.Ctx) error {
 
-	url := "https://" + facebook + "/fba/facebook-lookup-posts?url=" + account + "/" + arg
+	url := "https://" + youtube + "/search?channelId=" + account + "&part=snippet%2Cid&maxResults=50"
 	req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("x-rapidapi-host", facebook)
+	req.Header.Add("x-rapidapi-host", youtube)
 	req.Header.Add("x-rapidapi-key", rapid_key) //"383761aad6mshbf292f71c7c000bp1ede65jsn8de17628fc26")
 
 	res, _ := http.DefaultClient.Do(req)
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
+
+	id := gjson.Get(string(body), "id").String()
+	profile_pic_url := ""
+	profile_pic_hd := ""
+	_nodes := gjson.Get(string(body), "items").Array()
+	//thisMap := make(map[string]string)//make([]map[string]string)
+
+	thisMap := make(map[int]map[string]string)
+	for i, v := range _nodes {
+		//fmt.Println(string(gjson.Get(v.String(), "id.videoId").String()))
+		//fmt.Println(string(gjson.Get(v.String(), "snippet.thumbnails.default.url").String()))
+		thisMap[i] = map[string]string{
+			"id":            id, //string(gjson.Get(v.String(), "id.videoId").String()),
+			"shortcode":     string(gjson.Get(v.String(), "id.videoId").String()),
+			"title":         string(gjson.Get(v.String(), "snippet.title").String()),
+			"is_video":      "1",
+			"thumbnail_src": toBase64(string(gjson.Get(v.String(), "snippet.thumbnails.default.url").String())),
+		}
+
+		//thisMap = append(thisMap,aMap)
+
+	}
+
+	j, _ := json.Marshal(thisMap)
+	//fmt.Println(string(j), err)
+	_res := c.JSON(fiber.Map{
+		"key":             "instagram",
+		"id":              id,
+		"username":        account,
+		"profile_pic_url": profile_pic_url,
+		"profile_pic_hd":  profile_pic_hd,
+		"data":            string(j),
+	})
+
+	return _res
+}
+
+func get_facebook(account string, arg string, c *fiber.Ctx) error {
+
+	url := "https://" + facebook + "/fba/facebook-lookup-posts?url=" + account + "/" + arg
+	req, _ := http.NewRequest("GET", url, nil)
+
+	req.Header.Add("x-rapidapi-host", facebook)
+	req.Header.Add("x-rapidapi-key", "416da2f301msh6c619d747361477p1b0661jsn84cf25529234")
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+	//fmt.Println(string(body))
 	id := gjson.Get(string(body), "pageId").String()
 	profile_pic_url := "" //gjson.Get(string(body), "profile_pic_url").String()
 	profile_pic_hd := ""  //gjson.Get(string(body), "profile_pic_url_hd").String()
@@ -678,8 +732,9 @@ func get_facebook(account string, arg string, c *fiber.Ctx) error {
 	thisMap := make(map[int]map[string]string)
 	for i, v := range _nodes {
 		thisMap[i] = map[string]string{
-			"id":   string(gjson.Get(v.String(), "id").String()),
-			"text": string(gjson.Get(v.String(), "text").String()),
+			"id":        string(gjson.Get(v.String(), "id").String()),
+			"shortcode": string(gjson.Get(v.String(), "id").String()),
+			"text":      string(gjson.Get(v.String(), "text").String()),
 			//"is_video":      string(gjson.Get(v.String(), "node.is_video").String()),
 			"thumbnail_src": string(gjson.Get(v.String(), "imageUrlList").String()),
 		}
