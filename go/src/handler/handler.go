@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -542,13 +543,48 @@ func GetPost(c *fiber.Ctx) error {
 // 	return thisMap
 
 // }
+type KeyData struct {
+	Key     string `json:"key" xml:"key" form:"key"`
+	Account string `json:"account" xml:"account" form:"account"`
+}
+
+func toBase64(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var base64Encoding string
+	mimeType := http.DetectContentType(bytes)
+
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	}
+
+	base64Encoding += base64.StdEncoding.EncodeToString(bytes)
+	return base64Encoding
+}
 
 func GetUser(c *fiber.Ctx) error {
+	p := new(KeyData)
 
+	if err := c.BodyParser(p); err != nil {
+		return err
+	}
 	payload := string(c.Request().Body())
 	log.Println("---databody----")
-	key := (gjson.Get(payload, "key")).String()
-	account := gjson.Get(payload, "account").String()
+	key := p.Key         //(gjson.Get(payload, "key")).String()
+	account := p.Account //gjson.Get(payload, "account").String()
 
 	body := c.JSON(fiber.Map{
 		"key":     key,
@@ -590,8 +626,8 @@ func get_instagram(account string, c *fiber.Ctx) error {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 	id := gjson.Get(string(body), "id").String()
-	profile_pic_url := gjson.Get(string(body), "profile_pic_url").String()
-	profile_pic_hd := gjson.Get(string(body), "profile_pic_url_hd").String()
+	profile_pic_url := toBase64(gjson.Get(string(body), "profile_pic_url").String())
+	profile_pic_hd := toBase64(gjson.Get(string(body), "profile_pic_url_hd").String())
 	_nodes := gjson.Get(string(body), "edge_owner_to_timeline_media.edges").Array()
 	//thisMap := make(map[string]string)//make([]map[string]string)
 
@@ -601,7 +637,7 @@ func get_instagram(account string, c *fiber.Ctx) error {
 			"id":            string(gjson.Get(v.String(), "node.id").String()),
 			"shortcode":     string(gjson.Get(v.String(), "node.shortcode").String()),
 			"is_video":      string(gjson.Get(v.String(), "node.is_video").String()),
-			"thumbnail_src": string(gjson.Get(v.String(), "node.thumbnail_src").String()),
+			"thumbnail_src": toBase64(string(gjson.Get(v.String(), "node.thumbnail_src").String())),
 		}
 		//thisMap = append(thisMap,aMap)
 
