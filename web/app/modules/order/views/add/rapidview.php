@@ -64,6 +64,12 @@
                 $("input[name='link']").prop('value',url);
                 break;
             case 'tiktok':
+                if($("#btn_load").is(":hidden"))
+                url ='https://www.'+category+'.com/'+$(`input[name='username']`).val()
+                else
+                url ='https://www.'+category+'.com/p/'+$(`input[name='post-it']`).val()
+
+                $("input[name='link']").prop('value',url);
                 break;
             case 'facebook':
                 if($("#btn_load").is(":hidden"))
@@ -74,6 +80,12 @@
                 $("input[name='link']").prop('value',url);
                 break;
             case 'twitter':
+                if($("#btn_load").is(":hidden"))
+                url ='https://www.'+category+'.com/'+$(`input[name='username']`).val()
+                else
+                url ='https://www.'+category+'.com/p/'+$(`input[name='post-it']`).val()
+
+                $("input[name='link']").prop('value',url);
                 break;
             case 'youtube':
                 if($("#btn_load").is(":hidden"))
